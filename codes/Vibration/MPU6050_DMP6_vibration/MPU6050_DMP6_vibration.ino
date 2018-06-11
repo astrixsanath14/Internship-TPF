@@ -124,7 +124,7 @@ bool blinkState = false;
 
 //--------------------------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------------------------
-// Vibration Variables :
+// Vibration Variavles :
 float prevX=0.00;
 float prevY=0.00;
 float prevZ=0.00;
@@ -190,7 +190,7 @@ void setup() {
   //for vibration try 9600 to notice small changes during movement
   // really up to you depending on your project)
   //Serial.begin(115200);
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
   // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3V or Arduino
@@ -370,32 +370,32 @@ void loop() {
     currY=ypr[1] * 180 / M_PI;
     currZ=ypr[2] * 180 / M_PI;
     
-    Serial.print("ypr\t");
+    /*Serial.print("ypr\t");
     Serial.print(currX);
     Serial.print("\t");
     Serial.print(currY);
     Serial.print("\t");
     Serial.println(currZ);
-
-    Serial.println();
+    */
+    //Serial.println();
     if(prevX==0.00&&prevY==0.00&&prevZ==0.00){
       prevX=currX;
       prevY=currY;
       prevZ=currZ;
     }
     else{
-      if(abs(currX-prevX>=5.00)||abs(currY-prevY>=5.00)||abs(currZ-prevZ>=5.00)){
+      if(abs(currX-prevX>=0.5)||abs(currY-prevY>=0.5)||abs(currZ-prevZ>=0.5)){
         Serial.println("There is Vibration Dude !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       }
       else{
-        Serial.println("No Vibration !!!");
+        //Serial.println("No Vibration !!!");
       }
       prevX=currX;
       prevY=currY;
       prevZ=currZ;
     }
     
-    Serial.println();
+    //Serial.println();
     
 #endif
 
