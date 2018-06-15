@@ -58,15 +58,34 @@ const char* password = "hibrohowru";
 //Setting up the wifi using personal hotspot
 char* topic = "outsinhala123";
 char* server = "iot.eclipse.org";
+//char* server = "broker.mqtt-dashboard.com";
 
-WiFiClient wifiClient;
 void callback(char* topic, byte* payload, unsigned int length) {
-  // handle message arrived
-  Serial.println("Message inside callback !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+
+  // Switch on the LED if an 1 was received as first character
+  if ((char)payload[0] == '1') {
+    digitalWrite(BUILTIN_LED, LOW);   // Turn the LED on (Note that LOW is the voltage level
+    // but actually the LED is on; this is because
+    // it is acive low on the ESP-01)
+  } else {
+    digitalWrite(BUILTIN_LED, HIGH);  // Turn the LED off by making the voltage HIGH
+  }
+
 }
 
-PubSubClient client(server, 1883, callback, wifiClient);
+//PubSubClient client(server, 8000 , callback, wifiClient);
 
+WiFiClient wifiClient;
+PubSubClient client(server, 1883 , callback, wifiClient);
+//client.setServer(server, 8000);
+//client.setCallback(callback);
 
 
 String macToStr(const uint8_t* mac)
@@ -79,7 +98,7 @@ String macToStr(const uint8_t* mac)
   }
   return result;
 }
- //End of setting up wifi
+//End of setting up wifi
 
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
@@ -212,14 +231,14 @@ void setup() {
   // the baud timing being too misaligned with processor ticks. You must use
   // 38400 or slower in these cases, or use some kind of external separate
   // crystal solution for the UART timer.
- 
+
   //Establishing Connection using ssid and password
   Serial.println();
   Serial.print("Connecting to ");
   Serial.println(ssid);
-  
+
   WiFi.begin(ssid, password);
-  
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -231,7 +250,7 @@ void setup() {
 
   //end of establishing connections
 
-// Generate client name based on MAC address and last 8 bits of microsecond counter
+  // Generate client name based on MAC address and last 8 bits of microsecond counter
   String clientName;
   clientName += "esp8266-";
   uint8_t mac[6];
@@ -248,8 +267,8 @@ void setup() {
 
 
 
-   //Connecting to the MQTT Server :
-     if (client.connect((char*) clientName.c_str())) {
+  //Connecting to the MQTT Server :
+  if (client.connect((char*) clientName.c_str())) {
     Serial.println("Connected to MQTT broker");
     Serial.print("Topic is: ");
     Serial.println(topic);
@@ -269,7 +288,7 @@ void setup() {
 
   // end of connecting to MQTT server
 
-  
+
   // initialize device
   Serial.println(F("Initializing I2C devices..."));
   mpu.initialize();
@@ -281,9 +300,9 @@ void setup() {
 
   // wait for ready
   /*Serial.println(F("\nSend any character to begin DMP programming and demo: "));
-  while (Serial.available() && Serial.read()); // empty buffer
-  while (!Serial.available());                 // wait for data
-  while (Serial.available() && Serial.read()); // empty buffer again
+    while (Serial.available() && Serial.read()); // empty buffer
+    while (!Serial.available());                 // wait for data
+    while (Serial.available() && Serial.read()); // empty buffer again
   */
   // load and configure the DMP
   Serial.println(F("Initializing DMP..."));
@@ -407,32 +426,32 @@ void loop() {
     mpu.dmpGetGravity(&gravity, &q);
     mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
     /*Serial.print("ypr\t");
-    Serial.print(ypr[0] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.print(ypr[1] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.println(ypr[2] * 180 / M_PI);*/
+      Serial.print(ypr[0] * 180 / M_PI);
+      Serial.print("\t");
+      Serial.print(ypr[1] * 180 / M_PI);
+      Serial.print("\t");
+      Serial.println(ypr[2] * 180 / M_PI);*/
 
     //check if connected to server and send data to the mqtt broker
-    String payload = "";
+    String payload = "{\"X\":";
     payload += ypr[0] * 180 / M_PI;
-    payload += ":";
+    payload += ", \"Y\":";
     payload += ypr[1] * 180 / M_PI;
-    payload += ":";
+    payload += ", \"Z\":";
     payload += ypr[2] * 180 / M_PI;
-    
+    payload += "}";
     if (client.connected()) {
-    Serial.print("Sending payload: ");
-    Serial.println(payload);
+      Serial.print("Sending payload: ");
+      Serial.println(payload);
 
-    if (client.publish(topic, (char*) payload.c_str())) {
-      Serial.println("Publish ok");
+      if (client.publish(topic, (char*) payload.c_str())) {
+        Serial.println("Publish ok");
+      }
+      else {
+        Serial.println("Publish failed");
+      }
     }
-    else {
-      Serial.println("Publish failed");
-    }
-  }
-  delay(1000);
+    delay(1000);
 #endif
 
 #ifdef OUTPUT_READABLE_REALACCEL
