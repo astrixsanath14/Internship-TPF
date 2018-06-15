@@ -1,0 +1,27 @@
+<h1>Real Time</h1>
+<script type="text/javascript"   src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script type="text/javascript">
+  var socket = io.connect('http//:localhost:9001');
+    socket.on('connect', function () {
+      socket.on('mqtt', function (msg) {
+        //var elmarr=msg.topic.split("/");
+        //var elm=msg;
+        console.log('outsinhala123'+' '+msg.payload);
+        $('#'.concat('pressure')).html(msg.payload);
+     });
+     socket.emit('subscribe',{topic:'outsinhala123'});
+   });
+</script>
+<table class="tablegv" style="width: 500px;">
+<tbody>
+<tr class="tablegvHeader">
+<td colspan="2"><center>Status</center></td>
+</tr>
+<tr>
+<td>Return temp</td>
+<td id="pressure"></td>
+</tr>
+</tbody>
+</table>

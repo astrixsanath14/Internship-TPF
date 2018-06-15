@@ -1,8 +1,8 @@
 var mqtt = require('mqtt');
-var client  = mqtt.connect('mqtt://172.16.11.18');
+var client  = mqtt.connect('http://iot.eclipse.org');
 client.on('connect', function () {
 setInterval(function() {
-client.publish('myTopic', 'Hello mqtt');
+client.publish('outsinhala123', 'Hello mqtt');
 console.log('Message Sent');
 }, 5000);
 });
