@@ -81,35 +81,30 @@
 	  </script>
    </head>
      <body>
-  <div class="title">Real Time Gyro Values
+
 
    <div class="wrapper1 clearfix">
-     <div
-     class="xGyro-panel">
-         <div class="initial-data" id="name-1">X-Value</div>
-            <div class="initial-data-value" id="xID">Initialising ...
-            </div>
-      </div>
-
-      <div
-      class="yGyro-panel">
-          <div class="initial-data" id="name-1">Y-Value
-          </div>
-             <div class="initial-data-value" id="yID">Initialising ...
-             </div>
-       </div>
-
-       <div
-       class="zGyro-panel">
-           <div class="initial-data" id="name-1">Z-Value
-           </div>
-              <div class="initial-data-value" id="zID">Initialising ...
-              </div>
+       <div class="title">Real Time Gyro Values
         </div>
-                <!--<h3>Y Value:</h3>
-                <div class="initial-data" id="yID">Initialising ...</div>
-                <h3>Z Value:</h3>              -->
+         <div class="xGyro-panel">
+             <div class="initial-data" id="name-1">X-Value</div>
+                <div class="initial-data-value" id="xID">Initialising ...
+                </div>
+          </div>
 
+          <div class="yGyro-panel">
+              <div class="initial-data" id="name-1">Y-Value
+              </div>
+                 <div class="initial-data-value" id="yID">Initialising ...
+                 </div>
+           </div>
+
+           <div class="zGyro-panel">
+               <div class="initial-data" id="name-1">Z-Value
+               </div>
+                  <div class="initial-data-value" id="zID">Initialising ...
+                  </div>
+            </div>
 
     </div>
 
@@ -118,9 +113,22 @@
   <div class="vibStat" id="vibID">Initialising ...</div>
 </div>
 </div>
+
+<div class="wrapper3 clearfix">
+
+<div id="chartContainer" >
+
 </div>
+
+</div>
+
+
+
  	<script>
 	MQTTconnect();
 	</script>
+
+  <script src="final.js"></script>
+  <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
    </body>
 </html>
