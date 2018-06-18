@@ -1,0 +1,17 @@
+mkdir sqlite
+
+cd sqlite
+
+sqlite test.db
+
+insert into students values(1,'sanath','r',60);
+insert into students values(2,'sharad','r',70);
+insert into students values(3,'anu','r',70);
+
+
+.mode column
+
+select * from students;
+
+.quit
+

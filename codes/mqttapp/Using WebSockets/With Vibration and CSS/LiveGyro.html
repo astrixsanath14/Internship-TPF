@@ -45,10 +45,10 @@
       else{
         if(Math.abs(prevX-xGyro)>=0.5||Math.abs(prevY-yGyro)>=0.5||Math.abs(prevZ-zGyro)>=0.5){
 
-          document.querySelector('#vibID').textContent = "Under Vibration !!!";
+          document.querySelector('#vibID').textContent = "Activity Started !!!";
         }
         else{
-          document.querySelector('#vibID').textContent = "No Vibration !!!";
+          document.querySelector('#vibID').textContent = "Activity Stopped !!!";
         }
         prevX = xGyro;
         prevY = yGyro;
