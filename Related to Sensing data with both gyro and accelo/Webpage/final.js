@@ -1,15 +1,22 @@
 window.onload = function () {
-var counter = 0;
+
 var dataPoints1 = [];
 var dataPoints2 = [];
 var dataPoints3 = [];
 
 var chart = new CanvasJS.Chart("chartContainer", {
+	zoomEnabled: true,
 	title: {
 		text: "Live Gyro Demo"
 	},
+	axisX: {
+		title: "chart updates every second"
+	},
 	axisY:{
 		includeZero: false
+	},
+	toolTip: {
+		shared: true
 	},
 	legend: {
     cursor:"pointer",
@@ -42,7 +49,7 @@ function toggleDataSeries(e) {
 	chart.render();
 }
 
-var updateInterval = 100;
+var updateInterval = 1000;
 var xVal = 0;
 
 function updateChart(count) {
@@ -68,23 +75,16 @@ function updateChart(count) {
 		y: yValue3
 	});
 	}
+
 	// updating legend text with  updated with y Value
 	chart.options.data[0].legendText = " X :" + yValue1;
 	chart.options.data[1].legendText = " Y :" + yValue2;
 	chart.options.data[2].legendText = " Z :" + yValue3;
-	xVal++;
-	if (dataPoints1.length > 50) {
-		dataPoints1.shift();
-	}
-	if(dataPoints2.length > 50){
-		dataPoints2.shift();
-	}
-	if(dataPoints3.length > 50){
-		dataPoints3.shift();
-	}
 	chart.render();
+  xVal++;
 }
 // generates first set of dataPoints
-updateChart(50);
+updateChart(100);
 setInterval(function(){updateChart()}, updateInterval);
+
 }

@@ -4,17 +4,9 @@
       <title>Real Time Gyro Values</title>
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript">
 	 </script>
-   <script type = "text/javascript" language = "javascript">
-
-   //var thresholdLimit = parseFloat(prompt('Enter a threshold value : '));
-
-   //var threshoLimit = prompt('Enter a threshold value : ');
-   var thresholdLimit = 0.5;
-   //document.querySelector('#tLimitID').textContent = thresholdLimit;
-   console.log(typeof(threshoLimit));
-
-    var mqtt;
-		//var reconnectTimeout = 100;
+	 <script type = "text/javascript" language = "javascript">
+		var mqtt;
+		var reconnectTimeout = 2000;
     var host="iot.eclipse.org";
     var port=1883;
 
@@ -22,21 +14,16 @@
     var prevY = 0;
     var prevZ = 0;
 
-
-    var initialListX = [];
-    var initialListY = [];
-    var initialListZ = [];
-    var initialCounter = 0;
-
-    var offX = 0;
-    var offY = 0;
-    var offZ = 0;
+    var aprevX = 0;
+    var aprevY = 0;
+    var aprevZ = 0;
 
     var InitialStatus = false;
-    var calStatus = false;
     //OR ......
 		//var host="broker.hivemq.com";
 		//var port=8000;
+
+
 
 	 	function onConnect() {
 	  // Once a connection has been made, make a subscription and send a message.
@@ -50,36 +37,35 @@
       var xGyro=parseFloat(tempData[0].split(':')[1]);
       var yGyro=parseFloat(tempData[1].split(':')[1]);
       var zGyro=parseFloat(tempData[2].split(':')[1]);
-      document.querySelector('#xID').textContent = xGyro - offX;
-      document.querySelector('#yID').textContent = yGyro - offY;
-      document.querySelector('#zID').textContent = zGyro - offZ;
 
-      document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
 
-      initialCounter++;
-      if(initialCounter<=50){
-        initialListX.push(xGyro);
-        initialListY.push(yGyro);
-        initialListZ.push(zGyro);
-        console.log(initialListX);
+      var axGyro=parseFloat(tempData[3].split(':')[1]);
+      var ayGyro=parseFloat(tempData[4].split(':')[1]);
+      var azGyro=parseFloat(tempData[5].split(':')[1]);
 
-      }
-      else if(InitialStatus==false){
-        calStatus = true;
+
+      document.querySelector('#xID').textContent = xGyro;
+      document.querySelector('#yID').textContent = yGyro;
+      document.querySelector('#zID').textContent = zGyro;
+
+      document.querySelector('#axID').textContent = axGyro;
+      document.querySelector('#ayID').textContent = ayGyro;
+      document.querySelector('#azID').textContent = azGyro;
+
+      if(InitialStatus==false){
         InitialStatus = true;
         prevX = xGyro;
         prevY = yGyro;
         prevZ = zGyro;
-        //offX=sum(initialListX)/100;
-        //offY=sum(initialListY)/100;
-        //offZ=sum(initialListZ)/100;
 
-        offX = initialListX.reduce((a, b) => a + b, 0)/50;
-        offY = initialListY.reduce((a, b) => a + b, 0)/50;
-        offZ = initialListZ.reduce((a, b) => a + b, 0)/50;
+        aprevX=axGyro;
+        aprevY=ayGyro;
+        aprevZ=azGyro;
       }
       else{
-        if(Math.abs(prevX-xGyro)>=thresholdLimit||Math.abs(prevY-yGyro)>=thresholdLimit||Math.abs(prevZ-zGyro)>=thresholdLimit){
+        if(Math.abs(prevX-xGyro)>=0.5||Math.abs(prevY-yGyro)>=0.5||Math.abs(prevZ-zGyro)>=0.5||
+        Math.abs(aprevX-axGyro)>=0.5||Math.abs(aprevY-ayGyro)>=0.5||Math.abs(aprevZ-azGyro)>=0.5){
+
           document.querySelector('#vibID').textContent = "Activity Started !!!";
         }
         else{
@@ -88,13 +74,10 @@
         prevX = xGyro;
         prevY = yGyro;
         prevZ = zGyro;
-      }
 
-      if(calStatus === true){
-        document.querySelector('#oLimitID').textContent = "Callibrated !!!";
-      }
-      else{
-        document.querySelector('#oLimitID').textContent = "Not Callibrated, Please wait for "+(50-initialCounter) + " records !!!!";
+        aprevX=axGyro;
+        aprevY=ayGyro;
+        aprevZ=azGyro;
       }
       /*console.log("Topic:     " + message.destinationName);
       //console.log("QoS:       " + message.qos);
@@ -121,8 +104,7 @@
 		}
 
 	  </script>
-     </head>
-
+   </head>
      <body>
 
 
@@ -148,14 +130,36 @@
                   <div class="initial-data-value" id="zID">Initialising ...
                   </div>
             </div>
+            <!--
+                  Acellometer Values
+            -->
+            <div class="xAccel-panel">
+                <div class="initial-data" id="name-1">Z-Value
+                </div>
+                   <div class="initial-data-value" id="axID">Initialising ...
+                   </div>
+            </div>
 
+             <div class="yAccel-panel">
+                 <div class="initial-data" id="name-1">Z-Value
+                 </div>
+                    <div class="initial-data-value" id="ayID">Initialising ...
+                    </div>
+            </div>
+
+            <div class="zAccel-panel">
+                <div class="initial-data" id="name-1">Z-Value
+                </div>
+                   <div class="initial-data-value" id="azID">Initialising ...
+                   </div>
+            </div>
     </div>
 
   <div class="wrapper2 clearfix">
   <div class="vib-box">Vibration Status
   <div class="vibStat" id="vibID">Initialising ...</div>
-</div>
-</div>
+  </div>
+  </div>
 
 <div class="wrapper3 clearfix">
 
@@ -165,17 +169,6 @@
 
 </div>
 
-  <div class="wrapper4 clearfix">
-      <div class="threshold-limit-main">Threshold Limit
-      <div class="threshold-limit" id="tLimitID">Initialising ...</div>
-  </div>
-  </div>
-
-  <div class="wrapper5 clearfix">
-      <div class="offset-limit-main">Offset Callibration Status
-      <div class="offset-limit" id="oLimitID">Initialising ...</div>
-  </div>
-  </div>
 
 
  	<script>
