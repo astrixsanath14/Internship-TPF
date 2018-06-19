@@ -55,11 +55,22 @@
 }
 
 .wrapper5 {
-    width: 75%;
-    height: 150px;
+    width: 35%;
+    height: 120px;
     position: absolute;
     top: 120%;
-    left: 50%;
+    left: 20%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.wrapper6 {
+    width: 35%;
+    height: 120px;
+    position: absolute;
+    top: 120%;
+    left: 80%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -167,7 +178,7 @@ body {
 .offset-limit {
   position: absolute;
   left: 50%;
-  top: 70%;
+  top: 50%;
   transform: translateX(-50%);
   height: 60px;
   font-size: 20px;

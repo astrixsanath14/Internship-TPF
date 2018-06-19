@@ -11,7 +11,7 @@
    //var threshoLimit = prompt('Enter a threshold value : ');
    var thresholdLimit = 0.5;
    //document.querySelector('#tLimitID').textContent = thresholdLimit;
-   console.log(typeof(threshoLimit));
+   //console.log(typeof(threshoLimit));
 
     var mqtt;
 		//var reconnectTimeout = 100;
@@ -46,6 +46,10 @@
 
       mqtt.onMessageArrived = function (message) {
       console.log("Live Feed: " + message.payloadString);
+
+      //console.log("tdata is : "+document.getElementById("tData").value);
+
+      thresholdLimit = document.getElementById("tData").value;
       var tempData=message.payloadString.split(',');
       var xGyro=parseFloat(tempData[0].split(':')[1]);
       var yGyro=parseFloat(tempData[1].split(':')[1]);
@@ -57,11 +61,11 @@
       document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
 
       initialCounter++;
-      if(initialCounter<=50){
+      if(initialCounter<=100){
         initialListX.push(xGyro);
         initialListY.push(yGyro);
         initialListZ.push(zGyro);
-        console.log(initialListX);
+        //console.log(initialListX);
 
       }
       else if(InitialStatus==false){
@@ -74,9 +78,9 @@
         //offY=sum(initialListY)/100;
         //offZ=sum(initialListZ)/100;
 
-        offX = initialListX.reduce((a, b) => a + b, 0)/50;
-        offY = initialListY.reduce((a, b) => a + b, 0)/50;
-        offZ = initialListZ.reduce((a, b) => a + b, 0)/50;
+        offX = initialListX.reduce((a, b) => a + b, 0)/100;
+        offY = initialListY.reduce((a, b) => a + b, 0)/100;
+        offZ = initialListZ.reduce((a, b) => a + b, 0)/100;
       }
       else{
         if(Math.abs(prevX-xGyro)>=thresholdLimit||Math.abs(prevY-yGyro)>=thresholdLimit||Math.abs(prevZ-zGyro)>=thresholdLimit){
@@ -94,7 +98,7 @@
         document.querySelector('#oLimitID').textContent = "Callibrated !!!";
       }
       else{
-        document.querySelector('#oLimitID').textContent = "Not Callibrated, Please wait for "+(50-initialCounter) + " records !!!!";
+        document.querySelector('#oLimitID').textContent = (100-initialCounter) + " records !!!!";
       }
       /*console.log("Topic:     " + message.destinationName);
       //console.log("QoS:       " + message.qos);
@@ -175,6 +179,16 @@
       <div class="offset-limit-main">Offset Callibration Status
       <div class="offset-limit" id="oLimitID">Initialising ...</div>
   </div>
+  </div>
+
+  <div class="wrapper6 clearfix">
+
+    Set Threshold Limit :
+    <input type="text" id="tData" name="LastName" value="0.5"><br>
+    <input type="submit" value="Submit">
+
+    <p>Click the "Submit" button and the form-data will be sent to a page on the server called.</p>
+
   </div>
 
 

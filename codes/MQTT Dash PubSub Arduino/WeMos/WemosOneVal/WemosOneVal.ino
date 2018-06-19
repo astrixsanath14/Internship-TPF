@@ -1,3 +1,8 @@
+// 3 values
+
+
+
+
 // I2C device class (I2Cdev) demonstration Arduino sketch for MPU6050 class using DMP (MotionApps v2.0)
 // 6/21/2012 by Jeff Rowberg <jeff@rowberg.net>
 // Updates should (hopefully) always be available at https://github.com/jrowberg/i2cdevlib
@@ -451,7 +456,7 @@ void loop() {
         Serial.println("Publish failed");
       }
     }
-    delay(1000);
+    delay(100);
 #endif
 
 #ifdef OUTPUT_READABLE_REALACCEL

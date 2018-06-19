@@ -55,8 +55,11 @@ body {
 
 .xGyro-panel,
 .yGyro-panel,
-.zGyro-panel {
-    width: 32%;
+.zGyro-panel,
+.xAccel-panel,
+.yAccel-panel,
+.zAccel-panel {
+    width: 16%;
     float: left;
     height: 500px;
     padding: 100px;

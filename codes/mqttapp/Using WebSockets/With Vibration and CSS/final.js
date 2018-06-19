@@ -69,22 +69,22 @@ function updateChart(count) {
 	});
 	}
 	// updating legend text with  updated with y Value
-	chart.options.data[0].legendText = " X :" + yValue1;
-	chart.options.data[1].legendText = " Y :" + yValue2;
-	chart.options.data[2].legendText = " Z :" + yValue3;
+	chart.options.data[0].legendText = " Yaw :" + yValue1;
+	chart.options.data[1].legendText = " Pitch :" + yValue2;
+	chart.options.data[2].legendText = " Roll :" + yValue3;
 	xVal++;
-	if (dataPoints1.length > 50) {
+	if (dataPoints1.length > 20) {
 		dataPoints1.shift();
 	}
-	if(dataPoints2.length > 50){
+	if(dataPoints2.length > 20){
 		dataPoints2.shift();
 	}
-	if(dataPoints3.length > 50){
+	if(dataPoints3.length > 20){
 		dataPoints3.shift();
 	}
 	chart.render();
 }
 // generates first set of dataPoints
-updateChart(50);
+updateChart(20);
 setInterval(function(){updateChart()}, updateInterval);
 }
