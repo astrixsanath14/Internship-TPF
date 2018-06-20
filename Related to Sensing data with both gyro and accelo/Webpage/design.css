@@ -13,9 +13,9 @@
 
 .wrapper1 {
     width: 1350px;
-    height: 210px;
+    height: 160px;
     position: absolute;
-    top: 14%;
+    top: 9%;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
@@ -23,12 +23,12 @@
 }
 
 
-.wrapper2 {
-    width: 750px;
-    height: 150px;
+.wrapper2 { /* threshold limit*/
+    width: 675px;
+    height: 130px;
     position: absolute;
-    top: 36.5%;
-    left: 50%;
+    top: 27.5%;
+    left: 73.5%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -38,17 +38,17 @@
     width: 95%;
     height: 160px;
     position: absolute;
-    top: 57.5%;
+    top: 46%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.wrapper4 {
-    width: 750px;
-    height: 150px;
+.wrapper4 {  /* Vibration Status*/
+    width: 675px;
+    height: 130px;
     position: absolute;
-    top: 110.5%;
-    left: 50%;
+    top: 27.5%;
+    left: 26.5%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -56,9 +56,9 @@
 
 .wrapper5 {
     width: 35%;
-    height: 120px;
+    height: 115px;
     position: absolute;
-    top: 130%;
+    top: 93%;
     left: 20%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
@@ -66,11 +66,11 @@
 }
 
 .wrapper6 {
-    width: 35%;
-    height: 120px;
+    width: 45%;
+    height: 115px;
     position: absolute;
-    top: 130%;
-    left: 80%;
+    top: 93%;
+    left:75%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -143,7 +143,7 @@ body {
 .vibStat {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 56%;
   transform: translateX(-50%);
   height: 60px;
   font-size: 30px;
@@ -181,8 +181,26 @@ body {
 .offset-limit {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 60%;
   transform: translateX(-50%);
   height: 60px;
   font-size: 20px;
+}
+.set-threshold-limit {
+  text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 60%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 25px;
+}
+
+.set-threshold-limit-input {
+  position: absolute;
+  left: 48%;
+  top: 60%;
+  transform: translateX(-50%);
+  height: 100px;
+  font-size: 50px;
 }

@@ -2,7 +2,7 @@
    <head>
      <link type="text/css" rel="stylesheet" href="design.css">
       <title>Real Time Gyro Values</title>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript">
+  	  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript">
 	 </script>
    <script type = "text/javascript" language = "javascript">
 
@@ -14,7 +14,7 @@
    //console.log(typeof(threshoLimit));
 
     var mqtt;
-		//var reconnectTimeout = 100;
+		var reconnectTimeout = 100;
     var host="iot.eclipse.org";
     var port=1883;
 
@@ -45,77 +45,85 @@
 		mqtt.subscribe("outsinhala12345");
 
       mqtt.onMessageArrived = function (message) {
-      console.log("Live Feed: " + message.payloadString);
+      var msg=message.payloadString
+      console.log("Live Feed: " + msg);
 
       //console.log("tdata is : "+document.getElementById("tData").value);
 
-      thresholdLimit = document.getElementById("tData").value;
-      var tempData=message.payloadString.split(',');
-      var xGyro=parseFloat(tempData[0].split(':')[1]);
-      var yGyro=parseFloat(tempData[1].split(':')[1]);
-      var zGyro=parseFloat(tempData[2].split(':')[1]);
-      document.querySelector('#xID').textContent = xGyro - offX;
-      document.querySelector('#yID').textContent = yGyro - offY;
-      document.querySelector('#zID').textContent = zGyro - offZ;
-
-      //accelo part
-      var xAccel=parseFloat(tempData[3].split(':')[1]);
-      var yAccel=parseFloat(tempData[4].split(':')[1]);
-      var zAccel=parseFloat(tempData[5].split(':')[1]);
-      document.querySelector('#axID').textContent = xAccel;
-      document.querySelector('#ayID').textContent = yAccel;
-      document.querySelector('#azID').textContent = zAccel;
-
-
-
-      document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
-
-      initialCounter++;
-      if(initialCounter<=100){
-        initialListX.push(xGyro);
-        initialListY.push(yGyro);
-        initialListZ.push(zGyro);
-        //console.log(initialListX);
-
-      }
-      else if(InitialStatus==false){
-        calStatus = true;
-        InitialStatus = true;
-        prevX = xGyro;
-        prevY = yGyro;
-        prevZ = zGyro;
-        //offX=sum(initialListX)/100;
-        //offY=sum(initialListY)/100;
-        //offZ=sum(initialListZ)/100;
-
-        offX = initialListX.reduce((a, b) => a + b, 0)/100;
-        offY = initialListY.reduce((a, b) => a + b, 0)/100;
-        offZ = initialListZ.reduce((a, b) => a + b, 0)/100;
+      if(msg=="hello from ESP8266"){
+        //continue; do nothing
       }
       else{
-        if(Math.abs(prevX-xGyro)>=thresholdLimit||Math.abs(prevY-yGyro)>=thresholdLimit||Math.abs(prevZ-zGyro)>=thresholdLimit){
-          document.querySelector('#vibID').textContent = "Activity Started !!!";
-        }
-        else{
-          document.querySelector('#vibID').textContent = "Activity Stopped !!!";
-        }
-        prevX = xGyro;
-        prevY = yGyro;
-        prevZ = zGyro;
-      }
+              thresholdLimit = document.getElementById("tData").value;
+              var tempData=message.payloadString.split(',');
+              var xGyro=parseFloat(tempData[0].split(':')[1]);
+              var yGyro=parseFloat(tempData[1].split(':')[1]);
+              var zGyro=parseFloat(tempData[2].split(':')[1]);
+              document.querySelector('#xID').textContent = xGyro - offX;
+              document.querySelector('#yID').textContent = yGyro - offY;
+              document.querySelector('#zID').textContent = zGyro - offZ;
 
-      if(calStatus === true){
-        document.querySelector('#oLimitID').textContent = "Callibrated !!!";
-      }
-      else{
-        document.querySelector('#oLimitID').textContent = (100-initialCounter) + " records !!!!";
-      }
-      /*console.log("Topic:     " + message.destinationName);
-      //console.log("QoS:       " + message.qos);
-      //console.log("Retained:  " + message.retained);
-      // Read Only, set if message might be a duplicate sent from broker
-      //console.log("Duplicate: " + message.duplicate);
-      //console.log(message);*/
+              //accelo part
+              var xAccel=parseFloat(tempData[3].split(':')[1]);
+              var yAccel=parseFloat(tempData[4].split(':')[1]);
+              var zAccel=parseFloat(tempData[5].split(':')[1]);
+              document.querySelector('#axID').textContent = xAccel;
+              document.querySelector('#ayID').textContent = yAccel;
+              document.querySelector('#azID').textContent = zAccel;
+
+
+
+              document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
+
+              initialCounter++;
+              if(initialCounter<=100){
+                initialListX.push(xGyro);
+                initialListY.push(yGyro);
+                initialListZ.push(zGyro);
+                //console.log(initialListX);
+
+              }
+              else if(InitialStatus==false){
+                calStatus = true;
+                InitialStatus = true;
+                prevX = xGyro;
+                prevY = yGyro;
+                prevZ = zGyro;
+                //offX=sum(initialListX)/100;
+                //offY=sum(initialListY)/100;
+                //offZ=sum(initialListZ)/100;
+
+                offX = initialListX.reduce((a, b) => a + b, 0)/100;
+                offY = initialListY.reduce((a, b) => a + b, 0)/100;
+                offZ = initialListZ.reduce((a, b) => a + b, 0)/100;
+              }
+              else{
+                if(Math.abs(prevX-xGyro)>=thresholdLimit||Math.abs(prevY-yGyro)>=thresholdLimit||Math.abs(prevZ-zGyro)>=thresholdLimit){
+                  document.querySelector('#vibID').textContent = "Activity Started !!!";
+                }
+                else{
+                  document.querySelector('#vibID').textContent = "Activity Stopped !!!";
+                }
+                prevX = xGyro;
+                prevY = yGyro;
+                prevZ = zGyro;
+              }
+
+              if(calStatus === true){
+                document.querySelector('#oLimitID').textContent = "Callibrated !!!";
+              }
+              else{
+                document.querySelector('#oLimitID').textContent = (100-initialCounter) + " records !!!!";
+              }
+              /*console.log("Topic:     " + message.destinationName);
+              //console.log("QoS:       " + message.qos);
+              //console.log("Retained:  " + message.retained);
+              // Read Only, set if message might be a duplicate sent from broker
+              //console.log("Duplicate: " + message.duplicate);
+              //console.log(message);*/
+
+
+            }
       }
 
     //message = new Paho.MQTT.Message("Hello World");
@@ -124,14 +132,20 @@
 	  }
 	  function MQTTconnect() {
 		console.log("connecting to "+ host +" "+ port);
-    mqtt = new Paho.MQTT.Client("ws://iot.eclipse.org/ws", "outsinhala123");
+    mqtt = new Paho.MQTT.Client("ws://iot.eclipse.org/ws", "clientId" + new Date().getTime());
+    //mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(1883),  "myClientId" + new Date().getTime());
+    /*mqttConnectOptions = new MqttConnectOptions();
+    mqttConnectOptions.setAutomaticReconnect(true);
+
+    mqtt.connect(mqttConnectOptions, null, mqttActionListener());*/
 		//document.write("connecting to "+ host);
 		var options = {
-			timeout: 3,
+			timeout: 1000,
 			onSuccess: onConnect,
 		};
 
 		mqtt.connect(options); //connect
+    return false;
 		}
 
 	  </script>
@@ -224,17 +238,15 @@
   </div>
 
   <div class="wrapper6 clearfix">
+    <div class="set-threshold-limit" id="stLimitID">Set Threshold Limit :</div>
 
-    Set Threshold Limit :
-    <input type="text" id="tData" name="LastName" value="0.5"><br>
-    <input type="submit" value="Submit">
-
-    <p>Click the "Submit" button and the form-data will be sent to a page on the server called.</p>
+    <div class="set-threshold-limit-input" id="stLimitInputID"><input type="text" id="tData" name="LastName" value="0.5"><br></div>
 
   </div>
 
 
  	<script>
+
 	MQTTconnect();
 	</script>
 

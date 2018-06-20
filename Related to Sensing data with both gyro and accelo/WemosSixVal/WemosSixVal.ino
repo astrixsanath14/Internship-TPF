@@ -56,7 +56,8 @@ const char* password = "hibrohowru";
 #include <ESP8266WiFi.h>
 
 //Setting up the wifi using personal hotspot
-char* topic = "outsinhala123";
+char* topic = "outsinhala12345";
+//char * server = "ws://iot.eclipse.org/mqtt";
 char* server = "iot.eclipse.org";
 //char* server = "broker.mqtt-dashboard.com";
 
@@ -469,7 +470,7 @@ void loop() {
         Serial.println("Publish failed");
       }
     }
-    delay(100);
+    delay(250);
 #endif
 
 #ifdef OUTPUT_READABLE_REALACCEL
