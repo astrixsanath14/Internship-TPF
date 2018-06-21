@@ -4,7 +4,7 @@ var dataPoints1 = [];
 var dataPoints2 = [];
 var dataPoints3 = [];
 
-var chart = new CanvasJS.Chart("chartContainer", {
+var chart2 = new CanvasJS.Chart("chartContainer", {
 	title: {
 		text: "Live Gyro Demo"
 	},
@@ -42,7 +42,7 @@ function toggleDataSeries(e) {
 	chart.render();
 }
 
-var updateInterval = 100;
+var updateInterval = 250;
 var xVal = 0;
 
 function updateChart(count) {
@@ -73,18 +73,18 @@ function updateChart(count) {
 	chart.options.data[1].legendText = " Pitch :" + yValue2;
 	chart.options.data[2].legendText = " Roll :" + yValue3;
 	xVal++;
-	if (dataPoints1.length > 20) {
+	if (dataPoints1.length > 1) {
 		dataPoints1.shift();
 	}
-	if(dataPoints2.length > 20){
+	if(dataPoints2.length > 1){
 		dataPoints2.shift();
 	}
-	if(dataPoints3.length > 20){
+	if(dataPoints3.length > 1){
 		dataPoints3.shift();
 	}
 	chart.render();
 }
 // generates first set of dataPoints
-updateChart(20);
+updateChart(1);
 setInterval(function(){updateChart()}, updateInterval);
 }

@@ -1,3 +1,5 @@
+
+
 <html>
    <head>
      <link type="text/css" rel="stylesheet" href="design.css">
@@ -13,10 +15,11 @@
    //document.querySelector('#tLimitID').textContent = thresholdLimit;
    //console.log(typeof(threshoLimit));
 
-    var mqtt;
-		var reconnectTimeout = 100;
-    var host="iot.eclipse.org";
-    var port=1883;
+   var mqtt;
+   var connected_flag=0;
+   var reconnectTimeout = 2000;
+   var host="iot.eclipse.org";
+   var port=1883;
 
     var prevX = 0;
     var prevY = 0;
@@ -26,11 +29,21 @@
     var initialListX = [];
     var initialListY = [];
     var initialListZ = [];
+
+    var AinitialListX = [];
+    var AinitialListY = [];
+    var AinitialListZ = [];
+
     var initialCounter = 0;
+    var totCounter = 0;
 
     var offX = 0;
     var offY = 0;
     var offZ = 0;
+
+    var AoffX = 0;
+    var AoffY = 0;
+    var AoffZ = 0;
 
     var InitialStatus = false;
     var calStatus = false;
@@ -40,18 +53,19 @@
 
 	 	function onConnect() {
 	  // Once a connection has been made, make a subscription and send a message.
-
 		console.log("Connected ");
 		mqtt.subscribe("outsinhala12345");
 
       mqtt.onMessageArrived = function (message) {
+      totCounter++;
       var msg=message.payloadString
-      console.log("Live Feed: " + msg);
+      console.log("Live Feed: " + totCounter + " " + msg);
 
       //console.log("tdata is : "+document.getElementById("tData").value);
 
       if(msg=="hello from ESP8266"){
         //continue; do nothing
+        calStatus = false;
       }
       else{
               thresholdLimit = document.getElementById("tData").value;
@@ -70,8 +84,6 @@
               document.querySelector('#axID').textContent = xAccel;
               document.querySelector('#ayID').textContent = yAccel;
               document.querySelector('#azID').textContent = zAccel;
-
-
 
               document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
 
@@ -130,6 +142,34 @@
 		//message.destinationName = "outsinhala123";
 		//mqtt.send(message);
 	  }
+
+
+
+      function onConnectionLost(){
+      console.log("connection lost");
+      //document.getElementById("status").innerHTML = "Connection Lost";
+      //document.getElementById("status_messages").innerHTML ="Connection Lost";
+      connected_flag=0;
+      }
+      function onFailure(message) {
+        console.log("Failed");
+        //document.getElementById("status_messages").innerHTML = "Connection Failed- Retrying";
+        setTimeout(MQTTconnect, reconnectTimeout);
+      }
+
+        function onConnected(recon,url){
+        console.log(" in onConnected " +reconn);
+        }
+
+
+        function disconnect()
+        {
+        if (connected_flag==1)
+          mqtt.disconnect();
+        }
+
+
+
 	  function MQTTconnect() {
 		console.log("connecting to "+ host +" "+ port);
     mqtt = new Paho.MQTT.Client("ws://iot.eclipse.org/ws", "clientId" + new Date().getTime());
@@ -140,10 +180,13 @@
     mqtt.connect(mqttConnectOptions, null, mqttActionListener());*/
 		//document.write("connecting to "+ host);
 		var options = {
-			timeout: 1000,
+			timeout: 3,
 			onSuccess: onConnect,
+      onFailure: onFailure
 		};
-
+    mqtt.onConnectionLost = onConnectionLost;
+    //mqtt.onMessageArrived = onMessageArrived;
+    mqtt.onConnected = onConnected;
 		mqtt.connect(options); //connect
     return false;
 		}
@@ -211,7 +254,7 @@
 
 <div class="wrapper3 clearfix">
 
-<div id="chartContainer" >
+<div id="chartContainer1" >
 
 </div>
 
@@ -244,13 +287,20 @@
 
   </div>
 
+  <div class="wrapper7 clearfix">
+
+  <div id="chartContainer2" >
+
+  </div>
+  </div>
 
  	<script>
 
 	MQTTconnect();
 	</script>
 
-  <script src="finalGyro.js"></script>
+  <script src="finalGyroAccel.js"></script>
   <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
    </body>
 </html>
+

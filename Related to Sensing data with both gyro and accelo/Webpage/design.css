@@ -23,7 +23,7 @@
 }
 
 
-.wrapper2 { /* threshold limit*/
+.wrapper2 { /* Threshold limit*/
     width: 675px;
     height: 130px;
     position: absolute;
@@ -34,15 +34,23 @@
     overflow: hidden;
 }
 
-.wrapper3 {
-    width: 95%;
+.wrapper3 {  /* Gyro Graph */
+    width: 45%;
     height: 160px;
     position: absolute;
     top: 46%;
-    left: 50%;
+    left: 25.5%;
     transform: translate(-50%, -50%);
 }
 
+.wrapper7 {  /* Accel Graph */
+    width: 45%;
+    height: 160px;
+    position: absolute;
+    top: 46%;
+    left: 74.2%;
+    transform: translate(-50%, -50%);
+}
 .wrapper4 {  /* Vibration Status*/
     width: 675px;
     height: 130px;
@@ -54,18 +62,18 @@
     overflow: hidden;
 }
 
-.wrapper5 {
-    width: 35%;
+.wrapper5 { /*  offset box */
+    width: 45%;
     height: 115px;
     position: absolute;
     top: 93%;
-    left: 20%;
+    left: 25%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
-.wrapper6 {
+.wrapper6 {   /*  threshold box */
     width: 45%;
     height: 115px;
     position: absolute;
