@@ -45,7 +45,28 @@
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
-//#include "MPU6050.h" // not necessary if using MotionApps include file
+#include "MPU6050.h" // not necessary if using MotionApps include file
+#include "Wire.h"
+
+///////////////////////////////////   CONFIGURATION   /////////////////////////////
+//Change this 3 variables if you want to fine tune the skecth to your needs.
+int buffersize=1000;     //Amount of readings used to average, make it higher to get more precision but sketch will be slower  (default:1000)
+int acel_deadzone=8;     //Acelerometer error allowed, make it lower to get more precision, but sketch may not converge  (default:8)
+int giro_deadzone=1;     //Giro error allowed, make it lower to get more precision, but sketch may not converge  (default:1)
+
+// default I2C address is 0x68pppp
+// specific I2C addresses may be passed as a parameter here
+// AD0 low = 0x68 (default for InvenSense evaluation board)
+// AD0 high = 0x69
+//MPU6050 mpu;
+MPU6050 mpu(0x68); // <-- use for AD0 high
+
+int16_t ax, ay, az,gx, gy, gz;
+
+int mean_ax,mean_ay,mean_az,mean_gx,mean_gy,mean_gz,state=0;
+int ax_offset,ay_offset,az_offset,gx_offset,gy_offset,gz_offset;
+
+///////////////////////////////////   SETUP   ////////////////////////////////////
 
 
 //library for pubsub mqtt broker to/from iot.eclipse.org
@@ -101,17 +122,13 @@ String macToStr(const uint8_t* mac)
 }
 //End of setting up wifi
 
-// Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
-// is used in I2Cdev.h
-#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
-#include "Wire.h"
-#endif
+
 
 // class default I2C address is 0x68
 // specific I2C addresses may be passed as a parameter here
 // AD0 low = 0x68 (default for SparkFun breakout and InvenSense evaluation board)
 // AD0 high = 0x69
-MPU6050 mpu;
+//MPU6050 mpu;
 //MPU6050 mpu(0x69); // <-- use for AD0 high
 
 /* =========================================================================
@@ -150,13 +167,13 @@ MPU6050 mpu;
 // not compensated for orientation, so +X is always +X according to the
 // sensor, just without the effects of gravity. If you want acceleration
 // compensated for orientation, us OUTPUT_READABLE_WORLDACCEL instead.
-#define OUTPUT_READABLE_REALACCEL
+//#define OUTPUT_READABLE_REALACCEL
 
 // uncomment "OUTPUT_READABLE_WORLDACCEL" if you want to see acceleration
 // components with gravity removed and adjusted for the world frame of
 // reference (yaw is relative to initial orientation, since no magnetometer
 // is present in this case). Could be quite handy in some cases.
-#define OUTPUT_READABLE_WORLDACCEL
+//#define OUTPUT_READABLE_WORLDACCEL
 
 // uncomment "OUTPUT_READABLE_YAWPITCHROLL" if you want to see the yaw/
 // pitch/roll angles (in degrees) calculated from the quaternions coming
@@ -195,8 +212,6 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0, 0, 0, 0, 0, 0, 0, 0, 0x00, 0x00, '\r', '\n' };
 
-
-
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
 // ================================================================
@@ -205,8 +220,6 @@ volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin h
 void dmpDataReady() {
   mpuInterrupt = true;
 }
-
-
 
 // ================================================================
 // ===                      INITIAL SETUP                       ===
@@ -225,8 +238,87 @@ void setup() {
   // (115200 chosen because it is required for Teapot Demo output, but it's
   // really up to you depending on your project)
   Serial.begin(115200);
-  while (!Serial); // wait for Leonardo enumeration, others continue immediately
+  //while (!Serial); // wait for Leonardo enumeration, others continue immediately
+  mpu.initialize();
+    // wait for ready
+  while (Serial.available() && Serial.read()); // empty buffer
+  /*while (!Serial.available()){
+    //Serial.println(F("Send any character to start sketch.\n"));
+    delay(1500);
+  }*/          
+  while (Serial.available() && Serial.read()); // empty buffer again
+  
+  // start message
+  Serial.println("\nMPU6050 Calibration Sketch");
+  delay(2000);
+  Serial.println("\nYour MPU6050 should be placed in horizontal position, with package letters facing up. \nDon't touch it until you see a finish message.\n");
+  delay(3000);
+  // verify connection
+  Serial.println(mpu.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
+  delay(1000);
+  // reset offsets
+  mpu.setXAccelOffset(0);
+  mpu.setYAccelOffset(0);
+  mpu.setZAccelOffset(0);
+  mpu.setXGyroOffset(0);
+  mpu.setYGyroOffset(0);
+  mpu.setZGyroOffset(0);
 
+for(int i=0;i<2;i++){
+    if (state==0){
+    Serial.println("\nReading sensors for first time...");
+    meansensors();
+    state++;
+    //delay(1000);
+  }
+  if (state==1) {
+    Serial.println("\nCalculating offsets...");
+    calibration();
+    state++;
+    //delay(1000);
+  }
+  if (state==2) {
+    meansensors();
+    Serial.println("\nFINISHED!");
+    Serial.print("\nSensor readings with offsets:\t");
+    Serial.print(mean_ax); 
+    Serial.print("\t");
+    Serial.print(mean_ay); 
+    Serial.print("\t");
+    Serial.print(mean_az); 
+    Serial.print("\t");
+    Serial.print(mean_gx); 
+    Serial.print("\t");
+    Serial.print(mean_gy); 
+    Serial.print("\t");
+    Serial.println(mean_gz);
+    Serial.print("Your offsets:\t");
+    Serial.print(ax_offset); 
+    Serial.print("\t");
+    Serial.print(ay_offset); 
+    Serial.print("\t");
+    Serial.print(az_offset); 
+    Serial.print("\t");
+    Serial.print(gx_offset); 
+    Serial.print("\t");
+    Serial.print(gy_offset); 
+    Serial.print("\t");
+    Serial.println(gz_offset); 
+    Serial.println("\nData is printed as: acelX acelY acelZ giroX giroY giroZ");
+    Serial.println("Check that your sensor readings are close to 0 0 16384 0 0 0");
+    Serial.println("If calibration was succesful write down your offsets so you can set them in your projects using something similar to mpu.setXAccelOffset(youroffset)");
+    //while (1);
+  }
+}
+
+    /*mpu.setXAccelOffset(ax_offset);
+    mpu.setYAccelOffset(ay_offset);
+    mpu.setZAccelOffset(az_offset);
+
+    mpu.setXGyroOffset(gx_offset);
+    mpu.setYGyroOffset(gy_offset);
+    mpu.setZGyroOffset(gz_offset);*/
+  
   // NOTE: 8MHz or slower host processors, like the Teensy @ 3.3V or Arduino
   // Pro Mini running at 3.3V, cannot handle this baud rate reliably due to
   // the baud timing being too misaligned with processor ticks. You must use
@@ -265,7 +357,6 @@ void setup() {
   Serial.print(" as ");
   Serial.println(clientName);
 
-
   //Connecting to the MQTT Server :
   if (client.connect((char*) clientName.c_str())) {
     Serial.println("Connected to MQTT broker");
@@ -284,13 +375,11 @@ void setup() {
     Serial.println("Will reset and try again...");
     abort();
   }
-
   // end of connecting to MQTT server
-
 
   // initialize device
   Serial.println(F("Initializing I2C devices..."));
-  mpu.initialize();
+  //mpu.initialize();
   pinMode(INTERRUPT_PIN, INPUT);
 
   // verify connection
@@ -313,13 +402,13 @@ void setup() {
   mpu.setZGyroOffset(-85);
   mpu.setZAccelOffset(1788); */// 1688 factory default for my test chip
 
-  mpu.setXGyroOffset(54);
+  /*mpu.setXGyroOffset(54);
   mpu.setYGyroOffset(70);
   mpu.setZGyroOffset(89);
   
   mpu.setXAccelOffset(-988);
   mpu.setYAccelOffset(-747);
-  mpu.setZAccelOffset(4925); // 1688 factory default for my test chip
+  mpu.setZAccelOffset(4925);*/ // 1688 factory default for my test chip
 
   //mpu.setZGyroOffset(-1); // 1688 factory default for my test chip
 
@@ -357,12 +446,12 @@ void setup() {
 }
 
 
-
 // ================================================================
 // ===                    MAIN PROGRAM LOOP                     ===
 // ================================================================
 
 void loop() {
+
   // if programming failed, don't try to do anything
   if (!dmpReady) return;
 
@@ -406,32 +495,7 @@ void loop() {
     // (this lets us immediately read more without waiting for an interrupt)
     fifoCount -= packetSize;
 
-#ifdef OUTPUT_READABLE_QUATERNION
-    // display quaternion values in easy matrix form: w x y z
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    Serial.print("quat\t");
-    Serial.print(q.w);
-    Serial.print("\t");
-    Serial.print(q.x);
-    Serial.print("\t");
-    Serial.print(q.y);
-    Serial.print("\t");
-    Serial.println(q.z);
-#endif
-
-#ifdef OUTPUT_READABLE_EULER
-    // display Euler angles in degrees
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    mpu.dmpGetEuler(euler, &q);
-    Serial.print("euler\t");
-    Serial.print(euler[0] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.print(euler[1] * 180 / M_PI);
-    Serial.print("\t");
-    Serial.println(euler[2] * 180 / M_PI);
-#endif
-
-#ifdef OUTPUT_READABLE_YAWPITCHROLL
+//#ifdef OUTPUT_READABLE_YAWPITCHROLL
     // display Euler angles in degrees
     mpu.dmpGetQuaternion(&q, fifoBuffer);
     mpu.dmpGetGravity(&gravity, &q);
@@ -481,7 +545,7 @@ void loop() {
       }
     }
     delay(250);
-#endif
+//#endif
 
 #ifdef OUTPUT_READABLE_REALACCEL
     // display real acceleration, adjusted to remove gravity
@@ -497,21 +561,6 @@ void loop() {
     Serial.println(aaReal.z);
 #endif
 
-/*#ifdef OUTPUT_READABLE_WORLDACCEL
-    // display initial world-frame acceleration, adjusted to remove gravity
-    // and rotated based on known orientation from quaternion
-    mpu.dmpGetQuaternion(&q, fifoBuffer);
-    mpu.dmpGetAccel(&aa, fifoBuffer);
-    mpu.dmpGetGravity(&gravity, &q);
-    mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-    mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-    Serial.print("aworld\t");
-    Serial.print(aaWorld.x);
-    Serial.print("\t");
-    Serial.print(aaWorld.y);
-    Serial.print("\t");
-    Serial.println(aaWorld.z);
-#endif*/ 
 
 #ifdef OUTPUT_TEAPOT
     // display quaternion values in InvenSense Teapot demo format:
@@ -530,6 +579,78 @@ void loop() {
     // blink LED to indicate activity
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
+  }
+}
+
+///////////////////////////////////   FUNCTIONS   ////////////////////////////////////
+void meansensors(){
+  long i=0,buff_ax=0,buff_ay=0,buff_az=0,buff_gx=0,buff_gy=0,buff_gz=0;
+
+  while (i<(buffersize+101)){
+    // read raw accel/gyro measurements from device
+    mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    
+    if (i>100 && i<=(buffersize+100)){ //First 100 measures are discarded
+      buff_ax=buff_ax+ax;
+      buff_ay=buff_ay+ay;
+      buff_az=buff_az+az;
+      buff_gx=buff_gx+gx;
+      buff_gy=buff_gy+gy;
+      buff_gz=buff_gz+gz;
+    }
+    if (i==(buffersize+100)){
+      mean_ax=buff_ax/buffersize;
+      mean_ay=buff_ay/buffersize;
+      mean_az=buff_az/buffersize;
+      mean_gx=buff_gx/buffersize;
+      mean_gy=buff_gy/buffersize;
+      mean_gz=buff_gz/buffersize;
+    }
+    i++;
+    delay(2); //Needed so we don't get repeated measures
+  }
+}
+
+void calibration(){
+  ax_offset=-mean_ax/8;
+  ay_offset=-mean_ay/8;
+  az_offset=(16384-mean_az)/8;
+
+  gx_offset=-mean_gx/4;
+  gy_offset=-mean_gy/4;
+  gz_offset=-mean_gz/4;
+  while (1){
+    int ready=0;
+    mpu.setXAccelOffset(ax_offset);
+    mpu.setYAccelOffset(ay_offset);
+    mpu.setZAccelOffset(az_offset);
+
+    mpu.setXGyroOffset(gx_offset);
+    mpu.setYGyroOffset(gy_offset);
+    mpu.setZGyroOffset(gz_offset);
+
+    meansensors();
+    Serial.println("...");
+
+    if (abs(mean_ax)<=acel_deadzone) ready++;
+    else ax_offset=ax_offset-mean_ax/acel_deadzone;
+
+    if (abs(mean_ay)<=acel_deadzone) ready++;
+    else ay_offset=ay_offset-mean_ay/acel_deadzone;
+
+    if (abs(16384-mean_az)<=acel_deadzone) ready++;
+    else az_offset=az_offset+(16384-mean_az)/acel_deadzone;
+
+    if (abs(mean_gx)<=giro_deadzone) ready++;
+    else gx_offset=gx_offset-mean_gx/(giro_deadzone+1);
+
+    if (abs(mean_gy)<=giro_deadzone) ready++;
+    else gy_offset=gy_offset-mean_gy/(giro_deadzone+1);
+
+    if (abs(mean_gz)<=giro_deadzone) ready++;
+    else gz_offset=gz_offset-mean_gz/(giro_deadzone+1);
+
+    if (ready==6) break;
   }
 }
 
