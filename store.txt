@@ -1,0 +1,150 @@
+
+    var prevX = 0;
+    var prevY = 0;
+    var prevZ = 0;
+
+    /*var AprevX = 0;
+    var AprevY = 0;
+    var AprevZ = 0;*/
+
+    var initialListX = [];
+    var initialListY = [];
+    var initialListZ = [];
+
+    var initialCounter = 0;
+    var totCounter = 0;
+
+    var offX = 0;
+    var offY = 0;
+    var offZ = 0;
+
+    var InitialStatus = false;
+    var calStatus = false;
+    //OR ......
+		//var host="broker.hivemq.com";
+		//var port=8000;
+
+	 	function onConnect() {
+	  // Once a connection has been made, make a subscription and send a message.
+		console.log("Connected ");
+		mqtt.subscribe("outsinhala12345");
+
+      mqtt.onMessageArrived = function (message) {
+      totCounter++;
+      var msg=message.payloadString
+      console.log("Live Feed: " + totCounter + " " + msg);
+/*
+      //console.log("tdata is : "+document.getElementById("tData").value);
+
+      if(msg=="hello from ESP8266"){
+        //continue; do nothing
+        calStatus = false;
+      }
+      else{
+              thresholdLimitA = document.getElementById("tDataA").value;
+              //thresholdLimitB = document.getElementById("tDataB").value;
+              var tempData=message.payloadString.split(',');
+              var xGyro=parseFloat(tempData[0].split(':')[1]);
+              var yGyro=parseFloat(tempData[1].split(':')[1]);
+              var zGyro=parseFloat(tempData[2].split(':')[1]);
+              document.querySelector('#xID').textContent = xGyro - offX;
+              document.querySelector('#yID').textContent = yGyro - offY;
+              document.querySelector('#zID').textContent = zGyro - offZ;
+
+              //accelo part
+              var xAccel=parseFloat(tempData[3].split(':')[1]);
+              var yAccel=parseFloat(tempData[4].split(':')[1]);
+              var zAccel=parseFloat(tempData[5].split(':')[1]);
+              //document.querySelector('#axID').textContent = xAccel;
+              //document.querySelector('#ayID').textContent = yAccel;
+              //document.querySelector('#azID').textContent = zAccel;
+
+              document.querySelector('#tLimitIDa').textContent = thresholdLimitA+" units";
+              //document.querySelector('#tLimitIDb').textContent = thresholdLimitB+" units";
+
+              initialCounter++;
+              if(initialCounter<=100){
+                initialListX.push(xGyro);
+                initialListY.push(yGyro);
+                initialListZ.push(zGyro);
+                //console.log(initialListX);
+              }
+              else if(InitialStatus==false){
+                calStatus = true;
+                InitialStatus = true;
+                prevX = xGyro;
+                prevY = yGyro;
+                prevZ = zGyro;
+                //offX=sum(initialListX)/100;
+                //offY=sum(initialListY)/100;
+                //offZ=sum(initialListZ)/100;
+
+                offX = initialListX.reduce((a, b) => a + b, 0)/100;
+                offY = initialListY.reduce((a, b) => a + b, 0)/100;
+                offZ = initialListZ.reduce((a, b) => a + b, 0)/100;
+              }
+              else{
+                if(Math.abs(prevX-xGyro)>=thresholdLimitA||Math.abs(prevY-yGyro)>=thresholdLimitA||Math.abs(prevZ-zGyro)>=thresholdLimitA){
+                  document.querySelector('#vibID').textContent = "Activity Started !!!";
+                }
+                else{
+                  document.querySelector('#vibID').textContent = "Activity Stopped !!!";
+                }
+                prevX = xGyro;
+                prevY = yGyro;
+                prevZ = zGyro;
+              }
+              /*
+              //acello algorithm
+              var accelostat = "";
+              if(Math.abs(AprevX-xAccel)>=thresholdLimitB){
+                  accelostat += "X-yes ";
+              }
+              else{
+                accelostat += "X-no ";
+              }
+              if(Math.abs(AprevY-yAccel)>=thresholdLimitB){
+                accelostat += "Y-yes ";
+            }
+            else{
+              accelostat += "Y-no ";
+            }
+              if(Math.abs(AprevZ-zAccel)>=thresholdLimitB){
+                accelostat += "Z-yes ";
+            }
+            else{
+              accelostat += "Z-no ";
+            }
+            console.log(accelostat);
+            document.querySelector('#vibIDB').textContent = "yaaru kanda";
+              */
+              prevX = xGyro;
+              prevY = yGyro;
+              prevZ = zGyro;
+
+              /*AprevX = xAccel;
+              AprevY = yAccel;
+              AprevZ = zAccel;*/
+              if(calStatus === true){
+                document.querySelector('#oLimitID').textContent = "Callibrated !!!";
+              }
+              else{
+                document.querySelector('#oLimitID').textContent = (100-initialCounter) + " records !!!!";
+              }
+              /*console.log("Topic:     " + message.destinationName);
+              //console.log("QoS:       " + message.qos);
+              //console.log("Retained:  " + message.retained);
+              // Read Only, set if message might be a duplicate sent from broker
+              //console.log("Duplicate: " + message.duplicate);
+              //console.log(message);*/
+
+
+            }
+
+    //message = new Paho.MQTT.Message("Hello World");
+		//message.destinationName = "outsinhala123";
+		//mqtt.send(message);
+  //}
+
+
+  }
