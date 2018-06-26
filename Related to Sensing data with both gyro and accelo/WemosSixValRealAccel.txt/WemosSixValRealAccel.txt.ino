@@ -313,13 +313,13 @@ void setup() {
   mpu.setZGyroOffset(-85);
   mpu.setZAccelOffset(1788); */// 1688 factory default for my test chip
 
-  mpu.setXGyroOffset(54);
+  mpu.setXGyroOffset(56);
   mpu.setYGyroOffset(70);
-  mpu.setZGyroOffset(89);
+  mpu.setZGyroOffset(93);
   
-  mpu.setXAccelOffset(-988);
-  mpu.setYAccelOffset(-747);
-  mpu.setZAccelOffset(4925); // 1688 factory default for my test chip
+  mpu.setXAccelOffset(-891);
+  mpu.setYAccelOffset(-780);
+  mpu.setZAccelOffset(4922); // 1688 factory default for my test chip
 
   //mpu.setZGyroOffset(-1); // 1688 factory default for my test chip
 
@@ -531,6 +531,8 @@ void loop() {
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
   }
+  mpu.resetFIFO();
+    
 }
 
 

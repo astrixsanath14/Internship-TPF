@@ -13,35 +13,101 @@
 
 .wrapper1 {
     width: 1350px;
-    height: 230px;
+    height: 160px;
     position: absolute;
-    top: 13%;
+    top: 9%;
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
-
-.wrapper2 {
-    width: 750px;
-    height: 150px;
+.wrapper2 { /* Gyro status*/
+    width: 675px;
+    height: 130px;
     position: absolute;
-    top: 38.5%;
-    left: 50%;
+
+    top: 93.5%;
+    left: 25.5%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
-.wrapper3 {
-    width: 95%;
-    height: 150px;
+.wrapper2b { /* Gyro status*/
+    width: 675px;
+    height: 130px;
     position: absolute;
-    top: 59.5%;
-    left: 50%;
+
+    top: 93.5%;
+    left: 73.5%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.wrapper3 {  /* Gyro Graph */
+    width: 45%;
+    height: 160px;
+    position: absolute;
+    top: 46%;
+    left: 25.5%;
     transform: translate(-50%, -50%);
 }
+
+.wrapper7 {  /* Accel Graph */
+    width: 45%;
+    height: 160px;
+    position: absolute;
+    top: 46%;
+    left: 74.2%;
+    transform: translate(-50%, -50%);
+}
+/*.wrapper4 {
+    width: 675px;
+    height: 130px;
+    position: absolute;
+    top: 93%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}*/
+
+.wrapper5 { /*  offset box */
+    width: 45%;
+    height: 115px;
+    position: absolute;
+
+    top: 27.5%;
+    left: 73.5%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.wrapper6a {   /*  threshold box */
+    width: 20%;
+    height: 115px;
+    position: absolute;
+    top: 27.5%;
+    left:12.5%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.wrapper6b {   /*  threshold box */
+    width: 20%;
+    height: 115px;
+    position: absolute;
+    top: 27.5%;
+    left:35%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
 body {
     background-image: linear-gradient(rgba(62, 20, 20, 0.4), rgba(62, 20, 20, 0.4)), url(back.jpg);
     background-size: cover;
@@ -58,7 +124,7 @@ body {
 .zGyro-panel,
 .xAccel-panel,
 .yAccel-panel,
-.zAccel-panel {
+.zAccel-panel  {
     width: 16%;
     float: left;
     height: 500px;
@@ -66,9 +132,9 @@ body {
 }
 
 .initial-data {
-    font-size: 40px;
+    font-size: 20px;
 
-    transform: translate(15%, 0%);
+    transform: translate(0%, -70%);
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -78,22 +144,22 @@ body {
 }
 
 .initial-data-value {
-    transform: translate(15%, -10%);
+    transform: translate(0%, -140%);
     text-align: center;
-    font-size: 30px;
-    font-weight: 100;
+    font-size: 20px;
+    font-weight: 70;
     margin-bottom: 100px;
 }
 
 .title {
   background-color: #EB4D4D;
   color: #fff;
-  width: 40%;
+  width: 35%;
   margin: 0 auto;
   padding: 12px;
   text-align: center;
 
-  font-size: 40px;
+  font-size: 30px;
 }
 
 .vib-box {
@@ -109,8 +175,106 @@ body {
 .vibStat {
   position: absolute;
   left: 50%;
+  top: 56%;
+  transform: translateX(-50%);
+  height: 60px;
+  font-size: 30px;
+}
+
+.vibStatB {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  transform: translateX(-50%);
+  height: 60px;
+  font-size: 30px;
+}
+
+.vib-boxB {
+  text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 40%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 35px;
+}
+
+
+
+.threshold-limit-main {
+  text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 40%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 35px;
+}
+
+.threshold-limit {
+  position: absolute;
+  left: 50%;
   top: 50%;
   transform: translateX(-50%);
   height: 60px;
   font-size: 30px;
+}
+
+.offset-limit-main {
+  text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 60%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 25px;
+}
+
+.offset-limit {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translateX(-50%);
+  height: 60px;
+  font-size: 20px;
+}
+
+.set-threshold-limit {
+  text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 60%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 25px;
+}
+
+.set-threshold-limit-input {
+  position: absolute;
+  left: 48%;
+  top: 60%;
+  transform: translateX(-50%);
+  height: 100px;
+  font-size: 50px;
+}
+
+
+.set-threshold-limitB {
+  text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 60%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 25px;
+}
+
+.set-threshold-limit-inputB {
+  position: absolute;
+  left: 48%;
+  top: 60%;
+  transform: translateX(-50%);
+  height: 100px;
+  font-size: 50px;
 }

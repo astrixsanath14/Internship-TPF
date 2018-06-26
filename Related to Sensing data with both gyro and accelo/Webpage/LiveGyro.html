@@ -1,5 +1,3 @@
-
-
 <html>
    <head>
      <link type="text/css" rel="stylesheet" href="design.css">
@@ -25,7 +23,6 @@
     var prevY = 0;
     var prevZ = 0;
 
-
     var initialListX = [];
     var initialListY = [];
     var initialListZ = [];
@@ -40,10 +37,6 @@
     var offX = 0;
     var offY = 0;
     var offZ = 0;
-
-    var AoffX = 0;
-    var AoffY = 0;
-    var AoffZ = 0;
 
     var InitialStatus = false;
     var calStatus = false;
@@ -150,6 +143,8 @@
       //document.getElementById("status").innerHTML = "Connection Lost";
       //document.getElementById("status_messages").innerHTML ="Connection Lost";
       connected_flag=0;
+      MQTTconnect() //connect
+
       }
       function onFailure(message) {
         console.log("Failed");
@@ -159,13 +154,6 @@
 
         function onConnected(recon,url){
         console.log(" in onConnected " +reconn);
-        }
-
-
-        function disconnect()
-        {
-        if (connected_flag==1)
-          mqtt.disconnect();
         }
 
 

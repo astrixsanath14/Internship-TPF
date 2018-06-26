@@ -1,0 +1,27 @@
+<h1>Real Time</h1>
+<script type="text/javascript" src="socket.io.min.js"></script>
+<!--//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js-->
+<script type="text/javascript" src="jquery-1.4.2.js"></script>
+<script type="text/javascript">
+  var socket = io.connect('http://localhost:5000');
+    socket.on('connect', function () {
+      socket.on('mqtt', function (msg) {
+        //var elmarr=msg.topic.split("/");
+        var elm=elmarr;
+        console.log(msg.topic+' '+msg.payload);
+        $('#'.concat(elm)).html(msg.payload);
+     });
+     socket.emit('subscribe',{topic:'outsinhala12345'});
+    });
+</script>
+<table class="tablegv" style="width: 500px;">
+<tbody>
+<tr class="tablegvHeader">
+<td colspan="2"><center>Status</center></td>
+</tr>
+<tr>
+<td>Return temp</td>
+<td id="returntemp"></td>
+</tr>
+</tbody>
+</table>

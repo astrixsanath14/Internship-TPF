@@ -1,0 +1,133 @@
+<html>
+
+<div class="wrapper">
+  <div class="Cube">
+    <b class="front">front</b>
+    <b class="back">back</b>
+    <b class="top">top</b>
+    <b class="bottom">bottom</b>
+    <b class="left">left</b>
+    <b class="right">right</b>
+    <i class="front"></i>
+    <i class="back"></i>
+    <i class="top"></i>
+    <i class="bottom"></i>
+    <i class="left"></i>
+    <i class="right"></i>
+  </div>
+</div>
+<style>
+
+body{
+  background-color: coral;
+}
+
+/* keyframes for rotating animation */
+@-webkit-keyframes spin {
+  /*from {transform: rotateX(0deg);}
+  to { transform: rotateX(360deg);}*/
+  from { transform: rotateY(-360deg); rotateY(-360deg) rotateZ(-360deg); }
+  to{ transform: rotateY(360deg); rotateY(360deg) rotateZ(360deg); }
+}
+
+/* keyframes for rotating animation */
+@-webkit-keyframes spin2 {
+  from {transform: rotateY(var(--Ydegcl));}
+  to { transform: rotateY(var(--Ydeganticl));}
+  /*from { transform: rotateY(-180deg)}
+  to{ transform: rotateY(360deg); }*/
+}
+
+/* scene wrapper */
+.wrapper{
+  height: 300px;
+  margin-top:50px;
+  position:relative;
+  perspective: 800;
+  perspective-origin: 50% 100px;
+}
+/* cube wrapper */
+.cube{
+  position: relative;
+  margin: 0 auto;
+  width: 200px;
+  transform-style: preserve-3d;
+  animation: spin 4s infinite linear;/*this alters the speed of rotation of the cube*/
+  transition: all 1s linear;
+}
+
+/* outer cube */
+b{
+  position:absolute;
+  width:200px;
+  height:200px;
+  display:block;
+  background:rgba(255,255,255,0.1);
+  box-shadow:inset 0 0 30px rgba(0,0,0,0.2);
+  font-size:20px;
+  text-align:center;
+  line-height:200px;
+  color:rgba(0,0,0,0.5);
+  font-family:sans-serif;
+  text-transform:uppercase;
+  transition: all 1s linear;
+}
+b.back{/* back is the origin, reference line */
+  transform: translateZ(-100px) rotateY(180deg);
+}
+b.right{
+  transform:rotateY(-270deg) translateX(100px);
+  transform-origin: top right;
+}
+b.left{
+  transform:rotateY(270deg) translateX(-100px);
+  transform-origin: center left;
+}
+b.top{
+  transform: translateY(-100px)rotateX(-90deg);
+  transform-origin: top center;
+}
+b.bottom{/*  IF U CHANGE THIS BOTTOM PART OF BOX ALTERS*/
+  transform: translateY(100px)rotateX(90deg);
+  transform-origin: bottom center;
+}
+b.front{
+  transform: translateZ(100px) rotateY(180deg);
+  /*transform-origin: center left;
+  translateY(100px);*/
+}
+
+element {
+  --Ydegcl:0;
+  --Ydeganticl: 0;
+}
+
+</style>
+
+<script>
+/*
+// get variable from inline style
+element.style.getPropertyValue("--Ydegcl");
+
+// get variable from wherever
+//var jsVar =
+getComputedStyle(element).getPropertyValue("--Ydegcl");
+
+// set variable on inline style
+element.style.setProperty("--Ydegcl", (jsVar + 90));
+
+// get variable from inline style
+element.style.getPropertyValue("--Ydeganticl");
+
+// get variable from wherever
+//var jsVar =
+getComputedStyle(element).getPropertyValue("--Ydeganticl");
+
+// set variable on inline style
+element.style.setProperty("--Ydeganticl", (jsVar + 90));
+*/
+
+
+</script>
+
+</html>
