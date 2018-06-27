@@ -272,7 +272,7 @@ void setup() {
     Serial.print("Topic is: ");
     Serial.println(topic);
 
-    if (client.publish(topic, "hello from ESP8266")) {
+    if (client.publish(topic, "{\"X\":0, \"Y\":0, \"Z\":0, \"aX\":0, \"aY\":0, \"aZ\":0}")) {
       Serial.println("Client Published !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
     else {

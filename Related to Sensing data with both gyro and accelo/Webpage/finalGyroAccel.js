@@ -14,8 +14,8 @@ var chart1 = new CanvasJS.Chart("chartContainer1", {
 	},
 	axisY:{
 		includeZero: false,
-		minimum:-500,
-		maximum:500
+		minimum:-300,
+		maximum:300
 	},
 	legend: {
     cursor:"pointer",
