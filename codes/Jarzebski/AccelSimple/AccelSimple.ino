@@ -10,6 +10,19 @@
 #include <MPU6050.h>
 
 MPU6050 mpu;
+int Xread;
+int Xrest;
+double Gx;
+int Yread;
+int Yrest;
+double Gy;
+int Zread;
+int Zrest;
+double Gz;
+int t=0;
+int t1=0;
+int t2=0;
+
 
 void setup() 
 {
@@ -24,11 +37,22 @@ void setup()
   }
 
   // If you want, you can set accelerometer offsets
-   mpu.setAccelOffsetX(0);
-   mpu.setAccelOffsetY(0);
-   mpu.setAccelOffsetZ(0);
+  mpu.setGyroOffsetX(56);
+  mpu.setGyroOffsetY(70);
+  mpu.setGyroOffsetZ(93);
+  
+  mpu.setAccelOffsetX(-891);
+  mpu.setAccelOffsetY(-780);
+  mpu.setAccelOffsetZ(4922);
   
   checkSettings();
+  
+  Vector rawAccel = mpu.readRawAccel();
+  Vector normAccel = mpu.readNormalizeAccel();
+
+    Xrest = rawAccel.XAxis;
+    Yrest = rawAccel.YAxis;
+    Zrest = rawAccel.ZAxis;
 }
 
 void checkSettings()
@@ -67,27 +91,69 @@ void checkSettings()
   Serial.println(mpu.getAccelOffsetZ());
   
   Serial.println();
+  
 }
 
 void loop()
 {
+  Serial.print("Time ");
+  t=millis();
+  t1=t-t2;
+  Serial.println(t1*0.001);
   Vector rawAccel = mpu.readRawAccel();
   Vector normAccel = mpu.readNormalizeAccel();
 
-  //Serial.print(" Xraw = ");
-  //Serial.print(rawAccel.XAxis);
-  //Serial.print(" Yraw = ");
-  //Serial.print(rawAccel.YAxis);
-  //Serial.print(" Zraw = ");
-  //Serial.println(rawAccel.ZAxis);
+  /*Serial.print(" Xraw = ");
+  Serial.print(rawAccel.XAxis);
+  Serial.print(" Yraw = ");
+  Serial.print(rawAccel.YAxis);
+  Serial.print(" Zraw = ");
+  Serial.println(rawAccel.ZAxis);*/
+    //Xread = analogRead(sensorpin)-Xrest;
+    Xread = rawAccel.XAxis-Xrest;
+    Yread = rawAccel.YAxis-Yrest;
+    Zread = rawAccel.ZAxis-Zrest;
+
+    Xrest = Xread;
+    Yrest = Yread;
+    Zrest = Zread;
+    //Gx=Xread/67.584;
+    Gx=Xread;
+    Serial.print("\tAcceleration  X :");
+    Serial.print(Gx);
+    Serial.print("\t \tVelocity  X :");
+    Serial.print(Gx*t1*0.001);
+    Serial.print("\t \tDistance  X :");
+    Serial.print(Gx*(t1*t1*0.0000005));
+    Serial.print("\n \n");
+    //Yread=analogRead(sensorpin1)-Yrest;
+    Gy=Yread;
+    Serial.print("\tAcceration  Y :");
+    Serial.print(Gy);
+    Serial.print("\t\tVelocity  Y :");
+    Serial.print(Gy*t1*0.001);
+    Serial.print("\t\tDistance  Y :");
+    Serial.print(Gy*t1*t1*0.0000005);
+    Serial.print("\n \n");
+    //Zread=analogRead(sensorpin2)-Zrest;
+    Gz=Zread;
+    Serial.print("\tAcceration  Z :");
+    Serial.print(Gz);
+    Serial.print("\t \t Velocity Z : ");
+    Serial.print(Gz*t1*0.001);
+    Serial.print("\t\tDistance  Z :");
+    Serial.print(Gz*t1*t1*0.0000005);
+    Serial.print("\n \n \n \n");
+    delay(1000);
+
   
-  Serial.print(" Xnorm = ");
+  /*Serial.print(" Xnorm = ");
   Serial.print(normAccel.XAxis);
   Serial.print(" Ynorm = ");
   Serial.print(normAccel.YAxis);
   Serial.print(" Znorm = ");
-  Serial.println(normAccel.ZAxis);
-  
+  Serial.println(normAccel.ZAxis);*/
+  t2=t;
   delay(10);
 }
 

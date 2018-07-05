@@ -57,10 +57,11 @@
       console.log("Live Feed: " + totCounter + " " + msg);
       //console.log("tdata is : "+document.getElementById("tData").value);
 
-      if(msg=="hello from ESP8266"){
+      if(msg=="hi sinhalaaa"){
         //continue; do nothing
         calStatus = false;
-              console.log('This line???');
+        //console.log('This line???');
+        initialCounter=0;
       }
       else{
             thresholdLimit = document.getElementById("tDataA").value;
@@ -120,12 +121,33 @@
               else{
                 document.querySelector('#vibID').textContent = "Activity Stopped !!!";
               }
-              if(Math.abs(prevaX-xAccel)>=thresholdLimitB||Math.abs(prevaY-yAccel)>=thresholdLimitB||Math.abs(prevaZ-zAccel)>=thresholdLimitB){
-                document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
+
+              var acceloStat = "";
+              if(Math.abs(prevaX-xAccel)>=thresholdLimitB){
+                //document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
+                acceloStat += "X-Yes ";
               }
               else{
-                document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
+                //document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
+                acceloStat += "X-No ";
               }
+              if(Math.abs(prevaY-yAccel)>=thresholdLimitB){
+                //document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
+                acceloStat += "Y-Yes ";
+              }
+              else{
+                //document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
+                acceloStat += "Y-No ";
+              }
+              if(Math.abs(prevaZ-zAccel)>=thresholdLimitB){
+                //document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
+                acceloStat += "Z-Yes ";
+              }
+              else{
+                //document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
+                acceloStat += "Z-No ";
+              }
+              document.querySelector('#vibIDB').textContent = acceloStat;
               prevX = xGyro;
               prevY = yGyro;
               prevZ = zGyro;
@@ -133,7 +155,7 @@
               prevaX = xAccel;
               prevaY = yAccel;
               prevaZ = zAccel;
-
+              calStatus === true;
             }
 
             if(calStatus === true){

@@ -1,0 +1,14 @@
+{
+  "name": "ble-devices",
+  "version": "1.0.0",
+  "description": "",
+  "main": "httpgg.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mqtt": "^2.18.2"
+  }
+}
