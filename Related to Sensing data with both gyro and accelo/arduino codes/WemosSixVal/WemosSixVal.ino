@@ -473,7 +473,7 @@ void loop() {
     payload += aaWorld.y;
     payload += ", \"aZ\":";
     payload += aaWorld.z;
-    payload += ":1}";
+    payload += ",1}";
     //String payload="1";
     if (client.connected()) {
       Serial.print("Sending payload: ");

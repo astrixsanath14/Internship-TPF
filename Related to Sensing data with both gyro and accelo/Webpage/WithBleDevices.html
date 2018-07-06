@@ -14,7 +14,7 @@
    var startTime = Math.floor(Date.now() / 1000);
    var currTime = Math.floor(Date.now() / 1000);
 
-   var timeTracker = {};
+   var timeTracker = new Array();
    //document.querySelector('#tLimitID').textContent = thresholdLimit;
    //console.log(typeof(threshoLimit));
 
@@ -29,7 +29,7 @@
     var prevX = 0;
     var prevY = 0;
     var prevZ = 0;
-
+    var activityMonitor = -1;
     var prevaX = 0;
     var prevaY = 0;
     var prevaZ = 0;
@@ -52,20 +52,20 @@
 		//var port=8000;
 
 	 	function onConnect() {
-	  // Once a connection has been made, make a subscription and send a message.
-		console.log("Connected ");
-    mqtt.subscribe(topics);
-    console.log();
+  	  // Once a connection has been made, make a subscription and send a message.
+  		console.log("Connected ");
+      mqtt.subscribe("outsinhala12345");
       mqtt.onMessageArrived = function (message){
-          var msg=message.payloadString;
-          //console.log(message.payloadString);
+      var msg=message.payloadString;
+
+          //console.log(timeTracker);
           if(msg.includes('{')){
             //topicFlag=1;
             //topics="gadhala12345";
             totCounter++;
             //var msg=message.payloadString;
             //console.log(topics);
-            console.log("Time Elapsed : "+(currTime-startTime).toString()+"s Live Feed: " + totCounter + " " + msg);
+            //console.log("Time Elapsed : "+(currTime-startTime).toString()+"s Live Feed: " + totCounter + " " + msg);
             //console.log("tdata is : "+document.getElementById("tData").value);
 
             if(msg=="hi sinhalaaa"){
@@ -82,9 +82,6 @@
                   var yGyro=parseFloat(tempData[1].split(':')[1]);
                   var zGyro=parseFloat(tempData[2].split(':')[1]);
 
-                  if(tempData[3] not in timeTracker.keys()){
-                    timeTracker[tempData[3]]=[0,-1,-1,-1,-1,-1];
-                  }
                   document.querySelector('#xID').textContent = xGyro - offX;
                   document.querySelector('#yID').textContent = yGyro - offY;
                   document.querySelector('#zID').textContent = zGyro - offZ;
@@ -97,6 +94,21 @@
                   document.querySelector('#ayID').textContent = yAccel;
                   document.querySelector('#azID').textContent = zAccel;
 
+                  var UUID = parseFloat(tempData[6]);
+                  var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
+                  //console.log('Threshold = '+thresholdRSSI);
+
+                  //console.log(typeof(timeTracker[UUID])=='undefined');
+                  if(typeof(timeTracker[UUID])=='undefined'){
+                    timeTracker[UUID]=[0,-1,-1,-1,-1,-1];
+                    //console.log('Not Found Dude!!!!!!!');
+
+                  }
+                  //console.log('Found Dude!!!!!!!');
+
+                  var prevRSSI = parseFloat(timeTracker[UUID][5]);
+
+                  //timeTracker[tempData[3]][6]=tempData;
                   //document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
 
                   initialCounter++;
@@ -109,7 +121,6 @@
                     prevaX = xAccel;
                     prevaY = yAccel;
                     prevaZ = zAccel;
-
                   }
                   else if(InitialStatus==false){
                     calStatus = true;
@@ -132,15 +143,18 @@
                   else{
                     if(Math.abs(prevX-xGyro)>=thresholdLimit||Math.abs(prevY-yGyro)>=thresholdLimit||Math.abs(prevZ-zGyro)>=thresholdLimit){
                       document.querySelector('#vibID').textContent = "Activity Started !!!";
+                      activityMonitor = 1;
                     }
                     else{
                       document.querySelector('#vibID').textContent = "Activity Stopped !!!";
+                      activityMonitor = -1;
                     }
 
                     var acceloStat = "";
                     if(Math.abs(prevaX-xAccel)>=thresholdLimitB){
                       //document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
                       acceloStat += "X-Yes ";
+                      activityMonitor = 1;
                     }
                     else{
                       //document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
@@ -149,6 +163,7 @@
                     if(Math.abs(prevaY-yAccel)>=thresholdLimitB){
                       //document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
                       acceloStat += "Y-Yes ";
+                      activityMonitor = 1;
                     }
                     else{
                       //document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
@@ -157,6 +172,7 @@
                     if(Math.abs(prevaZ-zAccel)>=thresholdLimitB){
                       //document.querySelector('#vibIDB').textContent = "Displacement in X/Y/Z !!!";
                       acceloStat += "Z-Yes ";
+                      activityMonitor = 1;
                     }
                     else{
                       //document.querySelector('#vibIDB').textContent = "No  Displacement !!!";
@@ -175,7 +191,30 @@
 
                   if(calStatus === true){
                     document.querySelector('#oLimitID').textContent = "Callibrated !!!";
-                    timeTracker[tempData[3]][4]=1;
+                    //timeTracker[tempData[6]][4]=1;
+
+                    if(prevRSSI<=thresholdRSSI){
+                        if(activityMonitor==1){
+                            if(timeTracker[UUID][1]==-1){ //new record
+                              timeTracker[2]=timeTracker[3]=Math.floor(Date.now() / 1000);
+                              timeTracker[UUID][1]=0;//Started
+                            }
+
+                            else if(timeTracker[UUID][1]==0){//already started
+                              timeTracker[3]=Math.floor(Date.now() / 1000);
+                            }
+                      }
+                      else{ // now stopped
+                        //already initialised
+                          timeTracker[UUID][1]=-1;//again start a new session
+                          timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                          timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
+                      }
+                    }
+                    else{
+                      //console.log('OutOfRange 123!!!!!!!!!!!!!!!!!!!!!!');
+                    }
+                      //console.log(UUID + 'TotalWorkTime = '+timeTracker[UUID][0]);
                   }
                   else{
                     document.querySelector('#oLimitID').textContent = (100-initialCounter) + " records !!!!";
@@ -188,30 +227,73 @@
                   //console.log(message);*/
                 }  //take out this multi line comment da!!!!!
               }
-                else{
+                else if(msg.includes(":")){
+                  //BLE PROXIMITY SCANNING PART
                   //topicFlag=-1;
                     //topics = "outsinhala12345";
-                    var msg=message.payloadString;
-                    console.log("Time Elapsed : "+(currTime-startTime).toString()+"s RSSI: " + msg);
+
                     //console.log(topics);
-                    var UUID = msg.split(":")[0];
-                    var RSSI = msg.split(":")[1];
-
+                    var msssssg = msg.split(":");
+                    var UUID = parseFloat(msssssg[0]);
+                    var RSSI = parseFloat(msssssg[1]);
+                    //console.log("current RSSI  = "+RSSI);
+                    //console.log("Time Elapsed : "+(currTime-startTime).toString()+"s RSSI: " + RSSI);
                     document.querySelector('#oLimitIDa').textContent = UUID;
-
                     document.querySelector('#oLimitIDb').textContent = RSSI;
-                }
+
+                    //console.log(typeof(timeTracker[UUID])=='undefined');
+                    if(typeof(timeTracker[UUID])=='undefined'){
+                      timeTracker[UUID]=[0,-1,-1,-1,-1,-1];
+                      //timeTracker[UUID][5]=RSSI;
+                      //console.log('Not Found Dude!!!!!!!');
+                    }
+                    //console.log(timeTracker);
+                    //console.log('Found Dude!!!!!!!');
+                    var prevRSSI = parseFloat(timeTracker[UUID][5]);
+                    if(Math.abs(RSSI-prevRSSI)>=30){
+                      activityMonitor = 1;
+                    }
+                    var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
+                    if(RSSI>=thresholdRSSI){
+                      if(activityMonitor==1){
+                          if(timeTracker[UUID][1]==-1){ //new record
+                            timeTracker[UUID][2]=timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
+                            timeTracker[UUID][1]=0;//Started
+                          }
+                          else if(timeTracker[UUID][1]==0){//already started
+                            timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
+                          }
+                    }
+                    else{ // now stopped
+                      //already initialised
+                      timeTracker[UUID][1]=-1;//again start a new session
+                      timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                      timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
+                    }
+                    }
+                    else{
+                      timeTracker[UUID][1]=-1;//again start a new session
+                      timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                      timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
+                      //alert("UUID "+UUID +" Active Time : "+timeTracker[UUID][0]+" RSSI : "+RSSI+" thresholdRSSI : "+thresholdRSSI);
+                      //console.log('OutOfRange456 !!!!!!!!!!!!!!!!!!!!!!');
+                      //console.log(UUID + 'TotalWorkTime = '+timeTracker[UUID][0]);
+                    }
+
+                    //console.log('RSSI'+RSSI);
+                    timeTracker[UUID][5]=RSSI;
+              }
+              topicFlag*=-1;
               if(topicFlag==-1){
                 topics="gadhala12345";
-                topicFlag=1;
               }
               else{
                   topics="outsinhala12345";
-                  topicFlag=-1;
               }
+              //console.log('here!');
               mqtt.subscribe(topics);
               currTime = Math.floor(Date.now() / 1000);
-      /*mqtt.onMessageArrived = function (message) {
+      /*mqtt1.onMessageArrived = function (message) {
       //totCounter++;
       var msg=message.payloadString;
       //console.log("Live Feed: " + totCounter + " " + msg);
@@ -219,11 +301,13 @@
       console.log(msg);
     }*/
 
+    console.log("Time : "+(currTime-startTime)+" "+msg);
   }
   console.log('no data');
+  //console.log(Math.floor(Date.now() / 1000));
   //onConnect();
 }
-      function onConnectionLost(message){
+      function onConnectionLost(message){-
       console.log("connection lost "+message.errorMessage);
       //document.getElementById("status").innerHTML = "Connection Lost";
       //document.getElementById("status_messages").innerHTML ="Connection Lost";
@@ -392,7 +476,7 @@
        <div class="wrapper6c clearfix"><!--IS IS FOR BLE SET Threshold-->
          <div class="set-threshold-limitC" id="stLimitIDc">BLE Th:</div>
 
-         <div class="set-threshold-limit-inputC" id="stLimitInputID"><input type="text" id="tDataC" name="LastNameC" value="20"><br></div>
+         <div class="set-threshold-limit-inputC" id="stLimitInputID"><input type="text" id="tDataC" name="LastNameC" value="-89"><br></div>
        </div>
 
        <div class="wrapper7 clearfix">
