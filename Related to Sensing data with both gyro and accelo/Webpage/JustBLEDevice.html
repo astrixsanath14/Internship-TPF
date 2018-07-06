@@ -49,7 +49,7 @@
 	 	function onConnect() {
 	  // Once a connection has been made, make a subscription and send a message.
 		console.log("Connected ");
-		mqtt.subscribe("outsinhala12345");
+		/*mqtt.subscribe("outsinhala12345");
 
 
       mqtt.onMessageArrived = function (message) {
@@ -171,17 +171,17 @@
             // Read Only, set if message might be a duplicate sent from broker
             //console.log("Duplicate: " + message.duplicate);
             //console.log(message);*/
-          }
-      }
+          //}
+      //}*/
 
-      /*mqtt1.subscribe("gadhala12345");
+      mqtt1.subscribe("gadhala12345");
       mqtt1.onMessageArrived = function (message) {
       //totCounter++;
       var msg=message.payloadString;
       //console.log("Live Feed: " + totCounter + " " + msg);
       //console.log("tdata is : "+document.getElementById("tData").value);
       console.log(msg);
-    }*/
+    }
 
 
 	  }
@@ -202,13 +202,12 @@
 
         function onConnected(recon,url){
         console.log(" in onConnected " +reconn);
-        }
-
+  }
 
 
 	  function MQTTconnect() {
 		console.log("connecting to "+ host +" "+ port);
-    mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId");
+    //mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId");
     mqtt1 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId");
 
     //mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(1883),  "myClientId" + new Date().getTime());
@@ -222,16 +221,16 @@
 			onSuccess: onConnect,
       onFailure: onFailure
 		};
-    mqtt.onConnectionLost = onConnectionLost;
+    /*mqtt.onConnectionLost = onConnectionLost;
     //mqtt.onMessageArrived = onMessageArrived;
     mqtt.onConnected = onConnected;
-		mqtt.connect(options); //connect
+		mqtt.connect(options); //connect*/
 
 
-    /*mqtt1.onConnectionLost = onConnectionLost;
+    mqtt1.onConnectionLost = onConnectionLost;
     //mqtt.onMessageArrived = onMessageArrived;
     mqtt1.onConnected = onConnected;
-		mqtt1.connect(options); //connect*/
+		mqtt1.connect(options); //connect
     return false;
 		}
 
@@ -345,10 +344,8 @@
        <div class="wrapper7 clearfix">
 
        <div id="chartContainer2" >
-
        </div>
        </div>
-
       	<script>
 
      	MQTTconnect();
