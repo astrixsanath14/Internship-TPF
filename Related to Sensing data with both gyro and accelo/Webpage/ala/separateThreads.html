@@ -6,6 +6,28 @@
 	 </script>
    <script type = "text/javascript" language = "javascript">
 
+   function insRow(UUID,SN,SWT,TWT) {
+     console.log('inserted in to a table');
+     var x = document.getElementById('POITable');
+     var new_row = x.rows[1].cloneNode(true);
+     var len = x.rows.length;
+     new_row.cells[0].innerHTML = len;
+
+     /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+     inp1.id += len;
+     inp1.value = '';
+     var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+     inp2.id += len;
+     inp2.value = '';*/
+     new_row.cells[1].innerHTML = UUID;
+     new_row.cells[2].innerHTML = SN;
+     new_row.cells[3].innerHTML = SWT;
+     new_row.cells[4].innerHTML = TWT;
+
+     x.appendChild(new_row);
+     return ;
+   }
+
    //var thresholdLimit = parseFloat(prompt('Enter a threshold value : '));
 
    //var threshoLimit = prompt('Enter a threshold value : ');
@@ -15,7 +37,27 @@
    var currTime = Math.floor(Date.now() / 1000);
 
    var timeTracker = new Array();
+
+   /*
+   timeTracker Details :
+   Index     Denotes                                           Initialised-With
+   0         Total Duration of work time within a session       0
+   1         state of started/stopped/new                      -1
+   2         prev start time                                   -1
+   3         prev end time                                     -1
+   4         Session Number for particular sensor/device       -1
+   5         RSSI VALUE                                         1 //denoting OUTOFRANGE
+   */
    var devicesHistory = new Array();
+
+   /*
+   devicesHistory Details :
+   Index     Denotes                                           Initialised-With
+   0         Last Session Number                                1
+   1         Last Work Duration                                -1
+   2         Total Work Time of Device                         -1
+   3         Last INRANGE or OUTOFRANGE                        -1
+   */
    //document.querySelector('#tLimitID').textContent = thresholdLimit;
    //console.log(typeof(threshoLimit));
 
@@ -30,7 +72,6 @@
     var prevX = 0;
     var prevY = 0;
     var prevZ = 0;
-    var activityMonitor = -1;
     var prevaX = 0;
     var prevaY = 0;
     var prevaZ = 0;
@@ -52,15 +93,14 @@
 		//var host="broker.hivemq.com";
 		//var port=8000;
 
-	 	function onConnect() {
+    //sensor 1 code of onConnect
+	 	function onConnect1() {
   	  // Once a connection has been made, make a subscription and send a message.
-  		console.log("Connected ");
-      mqtt.subscribe("outsinhala12345");
-      mqtt.onMessageArrived = function (message){
+  		console.log("Connected to sensor 1");
+      mqtt1.subscribe("outsinhala12345");
+      mqtt1.onMessageArrived = function (message){
       var msg=message.payloadString;
-
-          //console.log(timeTracker);
-          if(msg.includes('{')){
+      console.log(msg);
             //topicFlag=1;
             //topics="gadhala12345";
             totCounter++;
@@ -69,7 +109,7 @@
             //console.log("Time Elapsed : "+(currTime-startTime).toString()+"s Live Feed: " + totCounter + " " + msg);
             //console.log("tdata is : "+document.getElementById("tData").value);
 
-            if(msg=="hi sinhalaaa"){
+            if(msg=="hello from ESP8266"){
               //continue; do nothing
               calStatus = false;
               //console.log('This line???');
@@ -95,25 +135,11 @@
                   document.querySelector('#ayID').textContent = yAccel;
                   document.querySelector('#azID').textContent = zAccel;
 
-                  var UUID = parseFloat(tempData[6]);
-                  var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
-                  //console.log('Threshold = '+thresholdRSSI);
-
-                  //console.log(typeof(timeTracker[UUID])=='undefined');
-                  if(typeof(timeTracker[UUID])=='undefined'){
-                    timeTracker[UUID]=[0,-1,-1,-1,-1,-1];
-                    //console.log('Not Found Dude!!!!!!!');
-
-                  }
-                  //console.log('Found Dude!!!!!!!');
-
-                  var prevRSSI = parseFloat(timeTracker[UUID][5]);
-
-                  //timeTracker[tempData[3]][6]=tempData;
                   //document.querySelector('#tLimitID').textContent = thresholdLimit+" units";
 
+                  var activityMonitor = -1;
                   initialCounter++;
-                  if(initialCounter<=100){
+                  if(initialCounter<=50){
                     initialListX.push(xGyro);
                     initialListY.push(yGyro);
                     initialListZ.push(zGyro);
@@ -148,7 +174,6 @@
                     }
                     else{
                       document.querySelector('#vibID').textContent = "Activity Stopped !!!";
-                      activityMonitor = -1;
                     }
 
                     var acceloStat = "";
@@ -187,40 +212,49 @@
                     prevaX = xAccel;
                     prevaY = yAccel;
                     prevaZ = zAccel;
-                    calStatus === true;
+                    calStatus = true;
                   }
 
-                  if(calStatus === true){
-                    document.querySelector('#oLimitID').textContent = "Callibrated !!!";
-                    //timeTracker[tempData[6]][4]=1;
+              if(calStatus === true){
+                        var UUID = parseFloat(tempData[6]);
+                        document.querySelector('#oLimitID').textContent = "Callibrated !!!";
+                        //console.log(typeof(timeTracker[UUID])=='undefined');
 
-                    if(prevRSSI>=thresholdRSSI&&prevRSSI<=0){
-                      console.log('INRANGE ');
-                        if(activityMonitor==1){
-                            if(timeTracker[UUID][1]==-1){ //new record
-                              timeTracker[2]=timeTracker[3]=Math.floor(Date.now() / 1000);
-                              timeTracker[UUID][1]=0;//Started
+                        if(typeof(devicesHistory[UUID])=='undefined'||devicesHistory[UUID][3]==0){
+                          //not defined in devicesHistory or timeTracker
+                          //do nothing
+                        }
+                        else{
+                          var prevRSSI = parseFloat(timeTracker[UUID][5]);
+                          var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
+                          //console.log('prevRSSI = '+prevRSSI);
+                            //console.log('INRANGE1 ');
+                              if(activityMonitor==1){
+                                console.log('active');
+                                  if(timeTracker[UUID][1]==-1){ //new record
+                                    timeTracker[UUID][2]=Math.floor(Date.now() / 1000);
+                                    timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
+                                    timeTracker[UUID][1]=0;//Started
+                                  }
+                                  else{//already started
+                                    timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
+                                    //timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                                  }
                             }
-
-                            else if(timeTracker[UUID][1]==0){//already started
-                              timeTracker[3]=Math.floor(Date.now() / 1000);
+                            else{ // now stopped
+                              //already initialised
+                              console.log('notactive');
+                                timeTracker[UUID][1]=-1;//again start a new session
+                                timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                                timeTracker[UUID][2] = timeTracker[UUID][3] = -1;
+                                console.log('total time : '+timeTracker[UUID][0] );
+                                //timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
                             }
+                            console.log(timeTracker[UUID]);
                       }
-                      else{ // now stopped
-                        //already initialised
-                          timeTracker[UUID][1]=-1;//again start a new session
-                          timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
-                          timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
-                      }
-                    }
-                    else{
-                      console.log('OUTOFRANGE ');
-                      //console.log('OutOfRange 123!!!!!!!!!!!!!!!!!!!!!!');
-                    }
-                      //console.log(UUID + 'TotalWorkTime = '+timeTracker[UUID][0]);
                   }
                   else{
-                    document.querySelector('#oLimitID').textContent = (100-initialCounter) + " records !!!!";
+                    document.querySelector('#oLimitID').textContent = (50-initialCounter) + " records !!!!";
                   }
                   /*console.log("Topic:     " + message.destinationName);
                   //console.log("QoS:       " + message.qos);
@@ -229,111 +263,170 @@
                   //console.log("Duplicate: " + message.duplicate);
                   //console.log(message);*/
                 }  //take out this multi line comment da!!!!!
-              }
-                else if(msg.includes(":")){
-                  //BLE PROXIMITY SCANNING PART
-                  //topicFlag=-1;
-                    //topics = "outsinhala12345";
 
-                    //console.log(topics);
-                    var msssssg = msg.split(":");
-                    var UUID = parseFloat(msssssg[0]);
-                    var RSSI = parseFloat(msssssg[1]);
-                    //console.log("current RSSI  = "+RSSI);
-                    //console.log("Time Elapsed : "+(currTime-startTime).toString()+"s RSSI: " + RSSI);
-                    document.querySelector('#oLimitIDa').textContent = UUID;
-                    document.querySelector('#oLimitIDb').textContent = RSSI;
-
-                    //console.log(typeof(timeTracker[UUID])=='undefined');
-                    if(typeof(timeTracker[UUID])=='undefined'){
-                      timeTracker[UUID]=[0,-1,-1,-1,-1,-1];
-                      //timeTracker[UUID][5]=RSSI;
-                      //console.log('Not Found Dude!!!!!!!');
-                    }
-                    //console.log(timeTracker);
-                    //console.log('Found Dude!!!!!!!');
-                    var prevRSSI = parseFloat(timeTracker[UUID][5]);
-
-                    var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
-                    if(RSSI>=thresholdRSSI&&RSSI<=0){
-                      console.log('INRANGE ');
-                      /*if(activityMonitor==1){
-                          if(timeTracker[UUID][1]==-1){ //new record
-                            timeTracker[UUID][2]=timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
-                            timeTracker[UUID][1]=0;//Started
-                          }
-                          else if(timeTracker[UUID][1]==0){//already started
-                            timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
-                          }
-                    }
-                    else{ // now stopped
-                      //already initialised
-                      timeTracker[UUID][1]=-1;//again start a new session
-                      timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
-                      timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
-                    }*/
-                    }
-                    else{
-                      console.log('OUTOFRANGE ');
-                      timeTracker[UUID][1]=-1;//again start a new session
-                      timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
-                      timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
-                      //alert("UUID "+UUID +" Active Time : "+timeTracker[UUID][0]+" RSSI : "+RSSI+" thresholdRSSI : "+thresholdRSSI);
-                      //console.log('OutOfRange456 !!!!!!!!!!!!!!!!!!!!!!');
-                      //console.log(UUID + 'TotalWorkTime = '+timeTracker[UUID][0]);
-                      console.log('Total Work Time = '+timeTracker[UUID][0]);
-                    }
-
-                    //console.log('RSSI'+RSSI);
-                    timeTracker[UUID][5]=RSSI;
-              }
-              topicFlag*=-1;
-              if(topicFlag==-1){
-                topics="gadhala12345";
-              }
-              else{
-                  topics="outsinhala12345";
-              }
-              //console.log('here!');
-              mqtt.subscribe(topics);
-              currTime = Math.floor(Date.now() / 1000);
-      /*mqtt1.onMessageArrived = function (message) {
-      //totCounter++;
-      var msg=message.payloadString;
-      //console.log("Live Feed: " + totCounter + " " + msg);
-      //console.log("tdata is : "+document.getElementById("tData").value);
-      console.log(msg);
-    }*/
-
-    console.log("Time : "+(currTime-startTime)+" "+msg);
   }
-  console.log('no data');
+  console.log('no data from sensor 1');
   //console.log(Math.floor(Date.now() / 1000));
   //onConnect();
 }
-      function onConnectionLost(message){-
-      console.log("connection lost "+message.errorMessage);
+
+//sensor 2 code of onConnect
+
+function onConnect2() {
+  // Once a connection has been made, make a subscription and send a message.
+console.log("Connected to sensor 2");
+mqtt2.subscribe("gadhala12345");
+mqtt2.onMessageArrived = function(message){
+    //BLE PROXIMITY SCANNING PART
+    //topicFlag=-1;
+      //topics = "outsinhala12345";
+
+      //console.log(topics);
+
+      var msg=message.payloadString;
+      console.log(msg);
+      if(msg=="hello from NODEMCU"){
+
+      }
+      else{
+      var msssssg = msg.split(":");
+      var UUID = parseFloat(msssssg[0]);
+      var RSSI = parseFloat(msssssg[1]);
+      //console.log("current RSSI  = "+RSSI);
+      //console.log("Time Elapsed : "+(currTime-startTime).toString()+"s RSSI: " + RSSI);
+      document.querySelector('#oLimitIDa').textContent = UUID;
+      document.querySelector('#oLimitIDb').textContent = RSSI;
+
+      var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
+      if(typeof(devicesHistory[UUID])=='undefined'){
+      //if a device is discovered
+        console.log('Defined '+UUID);
+        devicesHistory[UUID]=[1,[],0,-1];
+        timeTracker[UUID]=[0,-1,-1,0,1,RSSI];
+        if(RSSI>=thresholdRSSI&&RSSI<=0){
+          //within range
+          devicesHistory[UUID][3] = 1;
+        }
+        else{
+          //OUTOFRANGE
+          devicesHistory[UUID][3] = 0;
+          devicesHistory[UUID][0] = 0; //this session is not valid
+
+          //deleting UUID from timeTracker
+          var index = UUID;
+          if (index > -1) {
+            timeTracker.splice(index, 1);
+            console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
+          }
+          else{
+            console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
+          }
+        }
+      }
+      else if(typeof(timeTracker[UUID])=='undefined'){
+      //device has already been detected but is now only within range
+
+        console.log('Defined Device '+UUID);
+        if(RSSI>=thresholdRSSI&&RSSI<=0){
+        timeTracker[UUID]=[0,-1,-1,-1,devicesHistory[UUID][0]+1,RSSI];
+        devicesHistory[UUID][3]=1;
+      }
+      else{
+        //do nothing
+        devicesHistory[UUID][3]=0;
+      }
+      }
+      else
+      {
+        //defined and within range already
+          if(RSSI>=thresholdRSSI&&RSSI<=0){
+            console.log('INRANGE SENSOR UUID : '+UUID);
+            timeTracker[UUID][5]=RSSI;
+            devicesHistory[UUID][3]=1;
+            //console.log('RSSI'+RSSI);
+          }
+          else if(devicesHistory[UUID][3]!=0){
+            console.log('OUTOFRANGE SENSOR UUID : '+UUID);
+            timeTracker[UUID][1]=-1;//again start a new session
+            var SWT = timeTracker[UUID][3]-timeTracker[UUID][2];
+            timeTracker[UUID][0] += SWT;
+            timeTracker[UUID][2] = timeTracker[UUID][3] = -1;
+
+            //updating devicesHistory
+            devicesHistory[UUID][0]+=1;
+            devicesHistory[UUID][1].push(timeTracker[UUID][0]);
+            devicesHistory[UUID][2]+=timeTracker[UUID][0];
+            devicesHistory[UUID][3]=0;
+
+
+            console.log('UUID: '+UUID+' SESSION: '+devicesHistory[UUID][0]+' Total Work Time = '+devicesHistory[UUID][2]);
+            SWT = timeTracker[UUID][0];
+            var SN = devicesHistory[UUID][0];
+            var TWT = devicesHistory[UUID][2];
+            insRow(UUID,SN,SWT,TWT);
+
+
+            //deleting UUID from timeTracker
+            var index = UUID;
+            if (index > -1) {
+              timeTracker.splice(index, 1);
+              console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
+            }
+            else{
+              console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
+            }
+          }
+    }
+
+  }
+  console.log(devicesHistory);
+}
+console.log('no data from sensor 2');
+//console.log(Math.floor(Date.now() / 1000));
+//onConnect();
+}
+      function onConnectionLost1(message){
+      console.log("connection lost 1 "+message.errorMessage);
       //document.getElementById("status").innerHTML = "Connection Lost";
       //document.getElementById("status_messages").innerHTML ="Connection Lost";
       connected_flag=0;
       MQTTconnect(); //connect
-
       }
-      function onFailure(message) {
-        console.log("Failed");
+      function onFailure1(message) {
+        console.log("Failed 1");
+        console.log(message.errorMessage);
         //document.getElementById("status_messages").innerHTML = "Connection Failed- Retrying";
         setTimeout(MQTTconnect, reconnectTimeout);
       }
+      function onConnected1(recon,url){
+      console.log(" in onConnected " +reconn);
+      }
 
-        function onConnected(recon,url){
-        console.log(" in onConnected " +reconn);
-  }
+      function onConnectionLost2(message){
+      console.log("connection lost 2 "+message.errorMessage);
+      //document.getElementById("status").innerHTML = "Connection Lost";
+      //document.getElementById("status_messages").innerHTML ="Connection Lost";
+      connected_flag=0;
+      MQTTconnect(); //connect
+      }
+      function onFailure2(message) {
+        console.log("Failed 2");
+        console.log(message.errorMessage);
+        //document.getElementById("status_messages").innerHTML = "Connection Failed- Retrying";
+        setTimeout(MQTTconnect, reconnectTimeout);
+      }
+      function onConnected2(recon,url){
+      console.log(" in onConnected " +reconn);
+      }
+
 
 
 	  function MQTTconnect() {
 		console.log("connecting to "+ host +" "+ port);
-    mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId");
-    //mqtt1 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId");
+
+
+    mqtt1 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId1");
+    mqtt2 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId2");
 
     //mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(1883),  "myClientId" + new Date().getTime());
     /*mqttConnectOptions = new MqttConnectOptions();
@@ -341,17 +434,28 @@
 
     mqtt.connect(mqttConnectOptions, null, mqttActionListener());*/
 		//document.write("connecting to "+ host);
-		var options = {
+		var options1 = {
 			timeout: 3,
-			onSuccess: onConnect,
-      onFailure: onFailure
+			onSuccess: onConnect1,
+      onFailure: onFailure1
 		};
-    mqtt.onConnectionLost = onConnectionLost;
+
+    var options2 = {
+			timeout: 3,
+			onSuccess: onConnect2,
+      onFailure: onFailure2
+		};
+
+
+    mqtt1.onConnectionLost = onConnectionLost1;
     //mqtt.onMessageArrived = onMessageArrived;
-    mqtt.onConnected = onConnected;
-		mqtt.connect(options); //connect
+    mqtt1.onConnected = onConnected1;
+		mqtt1.connect(options1); //connect
 
-
+    mqtt2.onConnectionLost = onConnectionLost2;
+    //mqtt.onMessageArrived = onMessageArrived;
+    mqtt2.onConnected = onConnected2;
+		mqtt2.connect(options2);
     /*mqtt1.onConnectionLost = onConnectionLost;
     //mqtt.onMessageArrived = onMessageArrived;
     mqtt1.onConnected = onConnected;
@@ -426,12 +530,16 @@
      </div>
 
      <div class="wrapper3 clearfix">
-
      <div id="chartContainer1" >
-
+     </div>
      </div>
 
+     <div class="wrapper3b clearfix">
+     <div id="chartContainer2" >
      </div>
+     </div>
+     </div>
+
      <!-- graph2 fail
      <div class="wrapper7 clearfix">
 
@@ -483,13 +591,28 @@
          <div class="set-threshold-limit-inputC" id="stLimitInputID"><input type="text" id="tDataC" name="LastNameC" value="-89"><br></div>
        </div>
 
-       <div class="wrapper7 clearfix">
-       <div id="chartContainer2" >
+       <!-- Table of records havinf various sessions and sensors-UUID's-->
+       <div class="wrapper8 clearfix">
+       <div id="POItablediv" class="innerTable">
+         <table id="POITable" border="1">
+           <tr>
+             <td>S.No.</td>
+             <td>UUID</td>
+             <td>Session Number</td>
+             <td>Session-Work Time</td>
+             <td>Total Work Time</td>
+           </tr>
+           <tr>
+             <td>1</td>
+             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+           </tr>
+         </table>
        </div>
 
-       </div>
-       </div>
-
+     </div>
       	<script>
 
      	MQTTconnect();

@@ -59,8 +59,8 @@ char* topic = "gadhala12345";
 //char * server = "ws://iot.eclipse.org/mqtt";
 char* server = "iot.eclipse.org";
 //char* server = "broker.mqtt-dashboard.com";
-int counter=0;
-int ID=1;
+int RSSI=10;
+int ID=2;
 
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -222,7 +222,7 @@ void setup() {
 
   //end of establishing connections
 
-  // Generate client name based on MAC address and last 8 bits of microsecond counter
+  // Generate client name based on MAC address and last 8 bits of microsecond RSSI
   String clientName;
   clientName += "esp8266-";
   uint8_t mac[6];
@@ -273,11 +273,12 @@ void setup() {
 void loop() {
 
 #ifdef OUTPUT_READABLE_YAWPITCHROLL
-    counter++;
-    if(counter%100==0){
-      ID++;
+    RSSI--;
+    if(RSSI<=-150){
+      //ID++;
+      RSSI=15;
     }
-    String payload=String(ID)+":"+String(counter);
+    String payload=String(ID)+":"+String(RSSI);
     if (client.connected()) {
       Serial.print("Sending payload: ");
       Serial.println(payload);

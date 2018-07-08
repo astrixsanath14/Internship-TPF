@@ -1,0 +1,16 @@
+timeTracker Details :
+Index     Denotes                                           Initialised-With
+0         Total Duration of work time within a session       0
+1         state of started/stopped/new                      -1
+2         prev start time                                   -1
+3         prev end time                                     -1
+4         Session Number for particular sensor/device       -1
+5         RSSI VALUE                                         1  - OUTOFRANGE
+
+
+devicesHistory Details :
+Index     Denotes                                           Initialised-With
+0         Last Session Number                                1
+1         Last Work Duration                                -1
+2         Total Work Time of Device                         -1
+3         INRANGE                                           -1 
