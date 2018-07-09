@@ -9,7 +9,6 @@
 
    var deviceList = [];
    var timeDeviceList = [];
-
    function insRow(UUID,SN,SWT,TWT,ST,ET,inrangeTime) {
      console.log('inserted in to a table');
      var x = document.getElementById('POITable');
@@ -225,7 +224,7 @@
                         document.querySelector('#oLimitID').textContent = "Callibrated !!!";
                         //console.log(typeof(timeTracker[UUID])=='undefined');
 
-                        if(deviceList.indexOf(UUID)==-1||devicesHistory[UUID][3]==0){
+                        if(typeof(devicesHistory[UUID])=='undefined'||devicesHistory[UUID][3]==0){
                           //not defined in devicesHistory or timeTracker
                           //do nothing
                         }
@@ -269,17 +268,16 @@
                   //console.log(message);*/
                 }  //take out this multi line comment da!!!!!
 
-        }
-        console.log('no data from sensor 1');
-        //console.log(Math.floor(Date.now() / 1000));
-        //onConnect();
-    }
+  }
+  console.log('no data from sensor 1');
+  //console.log(Math.floor(Date.now() / 1000));
+  //onConnect();
+}
 
 //sensor 2 code of onConnect
 
 function onConnect2() {
   // Once a connection has been made, make a subscription and send a message.
-  var day;
 console.log("Connected to sensor 2");
 mqtt2.subscribe("gadhala12345");
 mqtt2.onMessageArrived = function(message){
@@ -292,7 +290,7 @@ mqtt2.onMessageArrived = function(message){
       var msg=message.payloadString;
       console.log(msg);
       if(msg=="hello from NODEMCU"){
-          //
+
       }
       else{
       var msssssg = msg.split(":");
@@ -304,10 +302,8 @@ mqtt2.onMessageArrived = function(message){
       document.querySelector('#oLimitIDb').textContent = RSSI;
 
       var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
-      console.log(deviceList.indexOf(UUID));
-      if(deviceList.indexOf(UUID)==-1){
+      if(typeof(devicesHistory[UUID])=='undefined'){
       //if a device is discovered
-      deviceList.push(UUID);
         console.log('Defined '+UUID);
         devicesHistory[UUID]=[1,[],0,-1,-1,-1];
         timeTracker[UUID]=[0,-1,-1,0,1,RSSI];
@@ -316,7 +312,6 @@ mqtt2.onMessageArrived = function(message){
           devicesHistory[UUID][3] = 1;
           devicesHistory[UUID][4] = Math.floor(Date.now() / 1000);
           devicesHistory[UUID][5] = Math.floor(Date.now() / 1000);
-          timeDeviceList.push(UUID);
         }
         else{
           //OUTOFRANGE
@@ -332,20 +327,9 @@ mqtt2.onMessageArrived = function(message){
           else{
             console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
           }
-
-          //updating timeDeviceList to remove device out of range
-          if (index1 > -1) {
-            timeDeviceList.splice(index1, 1);
-            console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
-          }
-          else{
-            console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
-          }
-
-
         }
       }
-      else if(timeDeviceList.indexOf(UUID)==-1){
+      else if(typeof(timeTracker[UUID])=='undefined'){
       //device has already been detected but is now only within range
 
         console.log('Defined Device '+UUID);
@@ -395,9 +379,9 @@ mqtt2.onMessageArrived = function(message){
             var inrangeTime = ET - ST;
             insRow(UUID,SN,SWT,TWT,moment.unix(ST),moment.unix(ET),inrangeTime);
 
+
             //deleting UUID from timeTracker
             var index = UUID;
-            var index1 = timeDeviceList.indexOf(UUID);
             if (index > -1) {
               timeTracker.splice(index, 1);
               console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
@@ -405,16 +389,9 @@ mqtt2.onMessageArrived = function(message){
             else{
               console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
             }
-            //updating timeDeviceList to remove device out of range
-            if (index1 > -1) {
-              timeDeviceList.splice(index1, 1);
-              console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
-            }
-            else{
-              console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
-            }
-        }
+          }
     }
+
   }
   console.log(devicesHistory);
 }
@@ -482,6 +459,7 @@ console.log('no data from sensor 2');
 			onSuccess: onConnect2,
       onFailure: onFailure2
 		};
+
 
     mqtt1.onConnectionLost = onConnectionLost1;
     //mqtt.onMessageArrived = onMessageArrived;
@@ -562,12 +540,6 @@ console.log('no data from sensor 2');
      <div class="wrapper2b clearfix">
      <div class="vib-boxB">Accel Status
        <div class="vibStatB" id="vibIDB">Initialising ...</div>
-     </div>
-     </div>
-
-     <div class="wrapper2c clearfix">
-     <div class="vib-boxC">Range Status
-       <div class="vibStatC" id="vibIDC">Initialising ...</div>
      </div>
      </div>
 
@@ -671,4 +643,3 @@ console.log('no data from sensor 2');
        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
         </body>
      </html>
-

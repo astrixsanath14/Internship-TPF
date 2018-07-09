@@ -22,24 +22,35 @@
 }
 
 .wrapper2 { /* Gyro status*/
-    width: 675px;
+    width: 475px;
     height: 130px;
     position: absolute;
 
     top: 93.5%;
-    left: 25.5%;
+    left: 19.7%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
 
 .wrapper2b { /* Accel status*/
-    width: 675px;
+    width: 475px;
     height: 130px;
     position: absolute;
 
     top: 93.5%;
-    left: 73.5%;
+    left: 80%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.wrapper2c { /* Accel status*/
+    width: 380px;
+    height: 130px;
+    position: absolute;
+    top: 93.5%;
+    left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: hidden;
@@ -143,7 +154,7 @@
 }
 
 .wrapper8 {
-    width: 700px;
+    width: 1190px;
     height: 130px;
     position: absolute;
 
@@ -213,7 +224,7 @@ body {
   text-align: center;
     background-color: #EB4D4D;
     color: #fff;
-    width: 40%;
+    width: 55%;
     margin: 0 auto;
     padding: 12px;
     font-size: 35px;
@@ -237,17 +248,34 @@ body {
   font-size: 30px;
 }
 
+.vibStatC {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  transform: translateX(-50%);
+  height: 60px;
+  font-size: 30px;
+}
+
 .vib-boxB {
   text-align: center;
     background-color: #EB4D4D;
     color: #fff;
-    width: 40%;
+    width: 55%;
     margin: 0 auto;
     padding: 12px;
     font-size: 35px;
 }
 
-
+.vib-boxC {
+    text-align: center;
+    background-color: #EB4D4D;
+    color: #fff;
+    width: 55%;
+    margin: 0 auto;
+    padding: 12px;
+    font-size: 35px;
+}
 
 .threshold-limit-main {
   text-align: center;
@@ -372,6 +400,7 @@ body {
   height: 100px;
   font-size: 50px;
 }
+
 .set-threshold-limit-inputC {
   position: absolute;
   left: 48%;
