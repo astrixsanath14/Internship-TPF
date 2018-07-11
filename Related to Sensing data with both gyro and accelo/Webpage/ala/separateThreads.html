@@ -4,18 +4,51 @@
       <title>Real Time Gyro Values</title>
   	  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" type="text/javascript">
 	 </script>
+   <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
    <script type = "text/javascript" language = "javascript">
-   var moment = require('moment');
+   //var moment = require('moment');
 
    var deviceList = [];
    var timeDeviceList = [];
+   function toHumanDate(epochValue){
+     var date = new Date(epochValue);
+     console.log(date);
+     var s = String(date.getDate()) + "/" + String(date.getMonth() + 1) + "/" + String(date.getFullYear()) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
+     return s;
+   }
 
-   function insRow(UUID,SN,SWT,TWT,ST,ET,inrangeTime) {
-     console.log('inserted in to a table');
+   //appending of record as a whole after one session
+   function insRow(UUID,SN,SWT,SIT,TWT,ST,ET,inrangeTime) {
+     console.log('inserted in to a table 1');
      var x = document.getElementById('POITable');
      var new_row = x.rows[1].cloneNode(true);
      var len = x.rows.length;
      new_row.cells[0].innerHTML = len;
+
+     new_row.cells[1].innerHTML = UUID;
+     new_row.cells[2].innerHTML = SN;
+
+     new_row.cells[3].innerHTML = toHumanDate(ST*1000);
+     new_row.cells[4].innerHTML = toHumanDate(ET*1000);
+
+     new_row.cells[5].innerHTML = SWT;
+     //console.log(SIT);
+     new_row.cells[6].innerHTML = SIT;
+     new_row.cells[7].innerHTML = TWT;
+     new_row.cells[8].innerHTML = inrangeTime;
+     x.appendChild(new_row);
+     return ;
+   }
+
+   //creating a new record
+   function crtRow(UUID,SN,ST) {
+     console.log('inserted in to a table 2');
+     var x = document.getElementById('POITable');
+     var new_row = x.rows[1].cloneNode(true);
+     console.log(new_row);
+     var len = x.rows.length;
+
+     new_row.cells[0].innerHTML = len-1;
      /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
      inp1.id += len;
      inp1.value = '';
@@ -24,12 +57,85 @@
      inp2.value = '';*/
      new_row.cells[1].innerHTML = UUID;
      new_row.cells[2].innerHTML = SN;
-     new_row.cells[3].innerHTML = SWT;
-     new_row.cells[4].innerHTML = TWT;
-     new_row.cells[5].innerHTML = ST;
-     new_row.cells[6].innerHTML = ET;
-     new_row.cells[7].innerHTML = inrangeTime;
+
+     new_row.cells[3].innerHTML = toHumanDate(ST*1000);
+     new_row.cells[4].innerHTML = " - ";
+
+     new_row.cells[5].innerHTML = " - ";
+     new_row.cells[6].innerHTML = " - ";
+     new_row.cells[7].innerHTML = " - ";
+     //new_row.cells[5].innerHTML = ST;
+     //new_row.cells[6].innerHTML = ET;
+     new_row.cells[8].innerHTML = " - ";
+     new_row.cells[9].innerHTML = " - ";
+     new_row.cells[10].innerHTML = " - ";
      x.appendChild(new_row);
+     return len;
+   }
+
+   function rangeTimeExitTimeUpdt(ST,ET,inrangeTime,row){
+     console.log('inserted in to a table 3');
+     var x = document.getElementById('POITable');
+     var new_row = x.rows[row];
+     //new_row.cells[6].innerHTML = SIT;
+     new_row.cells[8].innerHTML = inrangeTime;
+     //x.appendChild(new_row);
+     return;
+   }
+   //updating the reocrd of everytime
+   function updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row){
+     console.log('inserted in to a table 4');
+     //console.log(row);
+     var x = document.getElementById('POITable');
+     var new_row = x.rows[row];
+     /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+     inp1.id += len;
+     inp1.value = '';
+     var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+     inp2.id += len;
+     inp2.value = '';*/
+     //console.log(new_row);
+     new_row.cells[4].innerHTML = toHumanDate(ET*1000);
+
+     new_row.cells[5].innerHTML = SWT;
+     console.log(SIT);
+     new_row.cells[6].innerHTML = SIT;
+     new_row.cells[7].innerHTML = TWT;
+     new_row.cells[8].innerHTML = inrangeTime;
+
+     new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+     new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
+     //x.appendChild(new_row);
+     return;
+   }
+
+   //final upfation of record
+   function UpdateFinalRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row) {
+     console.log('inserted in to a table 5');
+     var x = document.getElementById('POITable');
+     var new_row = x.rows[row];
+     //var len = x.rows.length;
+     //new_row.cells[0].innerHTML = len;
+     /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+     inp1.id += len;
+     inp1.value = '';
+     var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+     inp2.id += len;
+     inp2.value = '';*/
+     //new_row.cells[1].innerHTML = UUID;
+     //new_row.cells[2].innerHTML = SN;
+
+     //new_row.cells[3].innerHTML = toHumanDate(ST*1000);
+     new_row.cells[4].innerHTML = toHumanDate(ET*1000);
+
+     new_row.cells[5].innerHTML = SWT;
+     new_row.cells[6].innerHTML = SIT;
+     new_row.cells[7].innerHTML = TWT;
+     new_row.cells[8].innerHTML = inrangeTime;
+
+     new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+     new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
+     //x.appendChild(new_row);
      return ;
    }
 
@@ -38,8 +144,6 @@
    //var threshoLimit = prompt('Enter a threshold value : ');
    var thresholdLimit = 0.5;
    var thresholdLimitB = 500;
-   var startTime = Math.floor(Date.now() / 1000);
-   var currTime = Math.floor(Date.now() / 1000);
 
    var timeTracker = new Array();
 
@@ -104,6 +208,7 @@
   		console.log("Connected to sensor 1");
       mqtt1.subscribe("outsinhala12345");
       mqtt1.onMessageArrived = function (message){
+        var epochDate = Math.floor(Date.now() / 1000);
       var msg=message.payloadString;
       console.log(msg);
             //topicFlag=1;
@@ -225,64 +330,131 @@
                         document.querySelector('#oLimitID').textContent = "Callibrated !!!";
                         //console.log(typeof(timeTracker[UUID])=='undefined');
 
-                        if(deviceList.indexOf(UUID)==-1||devicesHistory[UUID][3]==0){
+                        if(typeof(devicesHistory[UUID])=='undefined'||devicesHistory[UUID][3]==0){
                           //not defined in devicesHistory or timeTracker
                           //do nothing
                         }
                         else{
+                          devicesHistory[UUID][5] = epochDate;
+                          //device within range and discovered
+                          var SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row,ST;
                           var prevRSSI = parseFloat(timeTracker[UUID][5]);
                           var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
                           //console.log('prevRSSI = '+prevRSSI);
                             //console.log('INRANGE1 ');
                               if(activityMonitor==1){
                                 console.log('active');
-                                  if(timeTracker[UUID][1]==-1){ //new record
-                                    timeTracker[UUID][2]=Math.floor(Date.now() / 1000);
-                                    timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
+                                  if(timeTracker[UUID][1]==-1){ //new activity - start of an activity
+                                    timeTracker[UUID][2]=epochDate;
+                                    timeTracker[UUID][3]=epochDate;
+                                    devicesHistory[UUID][7] = timeTracker[UUID][2];
+                                    devicesHistory[UUID][8] = timeTracker[UUID][3];
                                     timeTracker[UUID][1]=0;//Started
+
+                                    /*if(devicesHistory[UUID][7]==-1){ //first activity in that session
+                                      var SN = devicesHistory[UUID][0];
+                                      var SN = devicesHistory[UUID][0];
+                                      devicesHistory[UUID][7] = timeTracker[UUID][2];
+                                      devicesHistory[UUID][8] = timeTracker[UUID][2];
+                                    }
+                                    else{ //not first activity in that session
+                                      devicesHistory[UUID][8] = epochDate;
+                                      var SWT = timeTracker[UUID][3]-timeTracker[UUID][2];
+                                      //hereupdtRow(SWT,SIT,TWT,inrangeTime,devicesHistory[UUID][6]);
+                                    }*/
+
+                                    SWT = timeTracker[UUID][0];
+                                    inrangeTime = devicesHistory[UUID][5] - devicesHistory[UUID][4];
+                                    SIT = inrangeTime - timeTracker[UUID][0];
+                                    TWT = devicesHistory[UUID][2]+timeTracker[UUID][0];
+                                    ET = devicesHistory[UUID][5];
+                                    LSST = devicesHistory[UUID][7];
+                                    LSET = devicesHistory[UUID][8];
+                                    row = devicesHistory[UUID][6];
+
+                                    console.log("HEREEEEEEEEEE 0 "+SIT);
+                                    updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                                   }
-                                  else{//already started
-                                    timeTracker[UUID][3]=Math.floor(Date.now() / 1000);
+                                  else{
+                                    //already started - activity
+                                    timeTracker[UUID][3]=epochDate;
+                                    devicesHistory[UUID][8] = timeTracker[UUID][3];
                                     //timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                                    /*devicesHistory[UUID][8] = timeTracker[UUID][3];
+                                    var SWT = timeTracker[UUID][3]-timeTracker[UUID][2];
+                                    var TWT = devicesHistory[UUID][2] + SWT;
+                                    var ST = devicesHistory[UUID][4];
+                                    var ET = devicesHistory[UUID][5];
+                                    var inrangeTime = ET - ST;
+                                    var SIT = inrangeTime - SWT;*/
+
+                                    //hereupdtRow(SWT,SIT,TWT,inrangeTime,devicesHistory[UUID][6]);
+                                    var activityTime = timeTracker[UUID][3]-timeTracker[UUID][2];
+                                    SWT = timeTracker[UUID][0]+ activityTime;
+                                    inrangeTime = devicesHistory[UUID][5]-[UUID][4];
+                                    SIT = inrangeTime - timeTracker[UUID][0];
+                                    TWT = devicesHistory[UUID][2]+timeTracker[UUID][0];
+                                    ET = devicesHistory[UUID][5];
+                                    LSST = devicesHistory[UUID][7];
+                                    LSET = devicesHistory[UUID][8];
+                                    row = devicesHistory[UUID][6];
+                                    console.log("HEREEEEEEEEEE 1 "+SIT);
+                                    updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                                   }
                             }
                             else{ // now stopped
                               //already initialised
                               console.log('notactive');
-                                timeTracker[UUID][1]=-1;//again start a new session
-                                timeTracker[UUID][0]+=timeTracker[UUID][3]-timeTracker[UUID][2];
+                                timeTracker[UUID][1]=-1;//again start a new activity
+                                var activityTime = timeTracker[UUID][3]-timeTracker[UUID][2];
+                                timeTracker[UUID][0]+=activityTime;
+
+                                //edited startTime
+                                SWT = timeTracker[UUID][0]+ activityTime;
+                                inrangeTime = devicesHistory[UUID][5]-devicesHistory[UUID][4];
+                                SIT = inrangeTime - timeTracker[UUID][0];
+                                TWT = devicesHistory[UUID][2]+timeTracker[UUID][0];
+                                ET = devicesHistory[UUID][5];
+                                LSST = devicesHistory[UUID][7];
+                                LSET = devicesHistory[UUID][8];
+                                row = devicesHistory[UUID][6];
+                                //edited stopTime
+
+                                //hereupdtRow(SWT,SIT,TWT,inrangeTime,devicesHistory[UUID][6]);
                                 timeTracker[UUID][2] = timeTracker[UUID][3] = -1;
-                                console.log('total time : '+timeTracker[UUID][0] );
-                                //timeTracker[UUID][2]=timeTracker[UUID][3]=-1;
+                                devicesHistory[UUID][7] = devicesHistory[UUID][8] = -1;
+                                console.log('total time : '+timeTracker[UUID][0]);
+
+                                console.log("HEREEEEEEEEEE 2 "+SIT);
+                                updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                             }
                             console.log(timeTracker[UUID]);
                       }
                   }
                   else{
                     document.querySelector('#oLimitID').textContent = (50-initialCounter) + " records !!!!";
-                  }
-                  /*console.log("Topic:     " + message.destinationName);
-                  //console.log("QoS:       " + message.qos);
-                  //console.log("Retained:  " + message.retained);
-                  // Read Only, set if message might be a duplicate sent from broker
-                  //console.log("Duplicate: " + message.duplicate);
-                  //console.log(message);*/
-                }  //take out this multi line comment da!!!!!
-
-        }
-        console.log('no data from sensor 1');
-        //console.log(Math.floor(Date.now() / 1000));
-        //onConnect();
-    }
+                }
+                /*console.log("Topic:     " + message.destinationName);
+                //console.log("QoS:       " + message.qos);
+                //console.log("Retained:  " + message.retained);
+                // Read Only, set if message might be a duplicate sent from broker
+                //console.log("Duplicate: " + message.duplicate);
+                //console.log(message);*/
+            }  //take out this multi line comment da!!!!!
+  }
+  console.log('no data from sensor 1');
+  //console.log(epochDate);
+  //onConnect();
+}
 
 //sensor 2 code of onConnect
 
 function onConnect2() {
   // Once a connection has been made, make a subscription and send a message.
-  var day;
 console.log("Connected to sensor 2");
 mqtt2.subscribe("gadhala12345");
 mqtt2.onMessageArrived = function(message){
+  var epochDate = Math.floor(Date.now() / 1000);
     //BLE PROXIMITY SCANNING PART
     //topicFlag=-1;
       //topics = "outsinhala12345";
@@ -292,7 +464,7 @@ mqtt2.onMessageArrived = function(message){
       var msg=message.payloadString;
       console.log(msg);
       if(msg=="hello from NODEMCU"){
-          //
+      //here you do nothing
       }
       else{
       var msssssg = msg.split(":");
@@ -304,19 +476,20 @@ mqtt2.onMessageArrived = function(message){
       document.querySelector('#oLimitIDb').textContent = RSSI;
 
       var thresholdRSSI = parseFloat(document.querySelector('#tDataC').value);
-      console.log(deviceList.indexOf(UUID));
-      if(deviceList.indexOf(UUID)==-1){
+      if(typeof(devicesHistory[UUID])=='undefined'){
       //if a device is discovered
-      deviceList.push(UUID);
         console.log('Defined '+UUID);
-        devicesHistory[UUID]=[1,[],0,-1,-1,-1];
+        devicesHistory[UUID]=[1,[],0,-1,-1,-1,-1,-1,-1];
         timeTracker[UUID]=[0,-1,-1,0,1,RSSI];
         if(RSSI>=thresholdRSSI&&RSSI<=0){
           //within range
           devicesHistory[UUID][3] = 1;
-          devicesHistory[UUID][4] = Math.floor(Date.now() / 1000);
-          devicesHistory[UUID][5] = Math.floor(Date.now() / 1000);
-          timeDeviceList.push(UUID);
+          devicesHistory[UUID][4] = epochDate;
+          devicesHistory[UUID][5] = epochDate;
+          var SN,ST;
+          SN = devicesHistory[UUID][0];
+          ST = devicesHistory[UUID][4];
+          devicesHistory[UUID][6] = crtRow(UUID,SN,ST);
         }
         else{
           //OUTOFRANGE
@@ -332,28 +505,20 @@ mqtt2.onMessageArrived = function(message){
           else{
             console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
           }
-
-          //updating timeDeviceList to remove device out of range
-          if (index1 > -1) {
-            timeDeviceList.splice(index1, 1);
-            console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
-          }
-          else{
-            console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
-          }
-
-
         }
       }
-      else if(timeDeviceList.indexOf(UUID)==-1){
-      //device has already been detected but is now only within range
-
+      else if(typeof(timeTracker[UUID])=='undefined'){
+      //device has already been detected and this is another session
         console.log('Defined Device '+UUID);
         if(RSSI>=thresholdRSSI&&RSSI<=0){
         timeTracker[UUID]=[0,-1,-1,-1,devicesHistory[UUID][0]+1,RSSI];
         devicesHistory[UUID][3]=1;
-        devicesHistory[UUID][4] = Math.floor(Date.now() / 1000);
-        devicesHistory[UUID][5] = Math.floor(Date.now() / 1000);
+        devicesHistory[UUID][4] = epochDate;
+        devicesHistory[UUID][5] = epochDate;
+        var SN,ST;
+        SN = devicesHistory[UUID][0];
+        ST = devicesHistory[UUID][4];
+        devicesHistory[UUID][6] = crtRow(UUID,SN,ST);
       }
       else{
         //do nothing
@@ -369,9 +534,18 @@ mqtt2.onMessageArrived = function(message){
 
             timeTracker[UUID][5]=RSSI;
             devicesHistory[UUID][3]=1;
+            devicesHistory[UUID][5] = epochDate;
             //console.log('RSSI'+RSSI);
+
+            var ST = devicesHistory[UUID][4];
+            var ET = devicesHistory[UUID][5];
+            var inrangeTime = ET - ST;
+            var row = devicesHistory[UUID][6];
+            console.log(devicesHistory[UUID][6]);
+            rangeTimeExitTimeUpdt(ST,ET,inrangeTime,row);
           }
           else if(devicesHistory[UUID][3]!=0){
+            //OUTOFRANGE
             console.log('OUTOFRANGE SENSOR UUID : '+UUID);
             document.querySelector('#vibIDC').textContent = "OUTOFRANGE";
             timeTracker[UUID][1]=-1;//again start a new session
@@ -384,30 +558,30 @@ mqtt2.onMessageArrived = function(message){
             devicesHistory[UUID][1].push(timeTracker[UUID][0]);
             devicesHistory[UUID][2]+=timeTracker[UUID][0];
             devicesHistory[UUID][3]=0;
-            devicesHistory[UUID][5] = Math.floor(Date.now() / 1000);
+            devicesHistory[UUID][5] = epochDate;
 
             console.log('UUID: '+UUID+' SESSION: '+devicesHistory[UUID][0]+' Total Work Time = '+devicesHistory[UUID][2]);
             SWT = timeTracker[UUID][0];
             var SN = devicesHistory[UUID][0];
             var TWT = devicesHistory[UUID][2];
-            var ST = devicesHistory[UUID][5];
+            var ST = devicesHistory[UUID][4];
             var ET = devicesHistory[UUID][5];
             var inrangeTime = ET - ST;
-            insRow(UUID,SN,SWT,TWT,moment.unix(ST),moment.unix(ET),inrangeTime);
+            var SIT = inrangeTime - SWT;
+            var row = devicesHistory[UUID][6];
+            var LSST = devicesHistory[UUID][7];
+            var LSET = devicesHistory[UUID][8];
+
+            UpdateFinalRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
+            //insRow(UUID,SN,SWT,SIT,TWT,ST,ET,inrangeTime);
+            //hereUpdateFinalRow(UUID,SN,SWT,SIT,TWT,ST,ET,inrangeTime,devicesHistory[UUID][6]);
+
+            devicesHistory[UUID][6] = devicesHistory[UUID][7] = devicesHistory[UUID][8] = -1; //reset
 
             //deleting UUID from timeTracker
             var index = UUID;
-            var index1 = timeDeviceList.indexOf(UUID);
             if (index > -1) {
               timeTracker.splice(index, 1);
-              console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
-            }
-            else{
-              console.log('NOT DELETEDDDDDDDDDDDDDDDDDDDDDD');
-            }
-            //updating timeDeviceList to remove device out of range
-            if (index1 > -1) {
-              timeDeviceList.splice(index1, 1);
               console.log('DELETEDDDDDDDDDDDDDDDDDDDDDD');
             }
             else{
@@ -419,9 +593,10 @@ mqtt2.onMessageArrived = function(message){
   console.log(devicesHistory);
 }
 console.log('no data from sensor 2');
-//console.log(Math.floor(Date.now() / 1000));
+//console.log(epochDate);
 //onConnect();
 }
+
       function onConnectionLost1(message){
       console.log("connection lost 1 "+message.errorMessage);
       //document.getElementById("status").innerHTML = "Connection Lost";
@@ -456,14 +631,12 @@ console.log('no data from sensor 2');
       console.log(" in onConnected " +reconn);
       }
 
-
-
 	  function MQTTconnect() {
 		console.log("connecting to "+ host +" "+ port);
 
 
-    mqtt1 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId1");
-    mqtt2 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId2");
+    mqtt1 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId1");//mpu6050sensor
+    mqtt2 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId2");//ble
 
     //mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(1883),  "myClientId" + new Date().getTime());
     /*mqttConnectOptions = new MqttConnectOptions();
@@ -472,16 +645,17 @@ console.log('no data from sensor 2');
     mqtt.connect(mqttConnectOptions, null, mqttActionListener());*/
 		//document.write("connecting to "+ host);
 		var options1 = {
-			timeout: 3,
+			timeout: 20,
 			onSuccess: onConnect1,
       onFailure: onFailure1
 		};
 
     var options2 = {
-			timeout: 3,
+			timeout: 20,
 			onSuccess: onConnect2,
       onFailure: onFailure2
 		};
+
 
     mqtt1.onConnectionLost = onConnectionLost1;
     //mqtt.onMessageArrived = onMessageArrived;
@@ -504,165 +678,172 @@ console.log('no data from sensor 2');
 
      <body>
 
-        <div class="wrapper1 clearfix">
-            <div class="title">Real Time Gyro Values
-             </div>
-              <div class="xGyro-panel">
-                  <div class="initial-data" id="name-1">Yaw</div>
-                     <div class="initial-data-value" id="xID">Initialising..
+       <div class="wrapper1 clearfix">
+           <div class="title">Real Time Gyro Values
+            </div>
+             <div class="xGyro-panel">
+                 <div class="initial-data" id="name-1">Yaw</div>
+                    <div class="initial-data-value" id="xID">Initialising..
+                    </div>
+              </div>
+
+              <div class="yGyro-panel">
+                  <div class="initial-data" id="name-1">Pitch
+                  </div>
+                     <div class="initial-data-value" id="yID">Initialising..
                      </div>
                </div>
 
-               <div class="yGyro-panel">
-                   <div class="initial-data" id="name-1">Pitch
+               <div class="zGyro-panel">
+                   <div class="initial-data" id="name-1">Roll
                    </div>
-                      <div class="initial-data-value" id="yID">Initialising..
+                      <div class="initial-data-value" id="zID">Initialising..
                       </div>
                 </div>
 
-                <div class="zGyro-panel">
-                    <div class="initial-data" id="name-1">Roll
+                <!--
+                      Acellometer Values
+                -->
+                <div class="xAccel-panel">
+                    <div class="initial-data" id="name-1">AccX
                     </div>
-                       <div class="initial-data-value" id="zID">Initialising..
+                       <div class="initial-data-value" id="axID">Initialising..
                        </div>
-                 </div>
+                </div>
 
-                 <!--
-                       Acellometer Values
-                 -->
-                 <div class="xAccel-panel">
-                     <div class="initial-data" id="name-1">AccX
+                 <div class="yAccel-panel">
+                     <div class="initial-data" id="name-1">AccY
                      </div>
-                        <div class="initial-data-value" id="axID">Initialising..
+                        <div class="initial-data-value" id="ayID">Initialising..
                         </div>
-                 </div>
+                </div>
 
-                  <div class="yAccel-panel">
-                      <div class="initial-data" id="name-1">AccY
-                      </div>
-                         <div class="initial-data-value" id="ayID">Initialising..
-                         </div>
-                 </div>
+                <div class="zAccel-panel">
+                    <div class="initial-data" id="name-1">AccZ
+                    </div>
+                       <div class="initial-data-value" id="azID">Initialising..
+                       </div>
+                </div>
 
-                 <div class="zAccel-panel">
-                     <div class="initial-data" id="name-1">AccZ
-                     </div>
-                        <div class="initial-data-value" id="azID">Initialising..
-                        </div>
-                 </div>
+        </div>
 
-         </div>
+      <div class="wrapper2 clearfix">
+      <div class="vib-box">Gyro Status
+      <div class="vibStat" id="vibID">Initialising ...</div>
+    </div>
+    </div>
 
-       <div class="wrapper2 clearfix">
-       <div class="vib-box">Gyro Status
-       <div class="vibStat" id="vibID">Initialising ...</div>
-     </div>
-     </div>
+    <div class="wrapper2b clearfix">
+    <div class="vib-boxB">Accel Status
+      <div class="vibStatB" id="vibIDB">Initialising ...</div>
+    </div>
+    </div>
 
-     <div class="wrapper2b clearfix">
-     <div class="vib-boxB">Accel Status
-       <div class="vibStatB" id="vibIDB">Initialising ...</div>
-     </div>
-     </div>
+    <div class="wrapper2c clearfix">
+    <div class="vib-boxC">Range Status
+      <div class="vibStatC" id="vibIDC">Initialising ...</div>
+    </div>
+    </div>
 
-     <div class="wrapper2c clearfix">
-     <div class="vib-boxC">Range Status
-       <div class="vibStatC" id="vibIDC">Initialising ...</div>
-     </div>
-     </div>
+    <div class="wrapper3 clearfix">
+    <div id="chartContainer1" >
+    </div>
+    </div>
 
-     <div class="wrapper3 clearfix">
-     <div id="chartContainer1" >
-     </div>
-     </div>
+    <div class="wrapper3b clearfix">
+    <div id="chartContainer2" >
+    </div>
+    </div>
+    </div>
 
-     <div class="wrapper3b clearfix">
-     <div id="chartContainer2" >
-     </div>
-     </div>
-     </div>
+    <!-- graph2 fail
+    <div class="wrapper7 clearfix">
 
-     <!-- graph2 fail
-     <div class="wrapper7 clearfix">
+    <div id="chartContainer2" >
 
-     <div id="chartContainer2" >
+    </div>
 
-     </div>
+    </div>
+    -->
+    <!--<div class="wrapper4 clearfix">
+          <div class="threshold-limit-main">Threshold Limit
+          <div class="threshold-limit" id="tLimitID">Initialising ...</div>
+      </div>
+      </div>
+    -->
+      <div class="wrapper5 clearfix"><!--callibration offset status-->
+          <div class="offset-limit-main">Callibration Status
+          <div class="offset-limit" id="oLimitID">Initialising ...</div>
+      </div>
+      </div>
 
-     </div>
-     -->
-     <!--<div class="wrapper4 clearfix">
-           <div class="threshold-limit-main">Threshold Limit
-           <div class="threshold-limit" id="tLimitID">Initialising ...</div>
-       </div>
-       </div>
-     -->
-       <div class="wrapper5 clearfix"><!--callibration offset status-->
-           <div class="offset-limit-main">Callibration Status
-           <div class="offset-limit" id="oLimitID">Initialising ...</div>
-       </div>
-       </div>
+      <div class="wrapper5a clearfix"><!--UUID-->
+          <div class="offset-limit-maina">UUID
+          <div class="offset-limita" id="oLimitIDa">Initialising ...</div>
+      </div>
+      </div>
 
-       <div class="wrapper5a clearfix"><!--UUID-->
-           <div class="offset-limit-maina">UUID
-           <div class="offset-limita" id="oLimitIDa">Initialising ...</div>
-       </div>
-       </div>
+      <div class="wrapper5b clearfix"><!--UUID-->
+          <div class="offset-limit-mainb">RSSI
+          <div class="offset-limitb" id="oLimitIDb">NA</div>
+      </div>
+      </div>
 
-       <div class="wrapper5b clearfix"><!--UUID-->
-           <div class="offset-limit-mainb">RSSI
-           <div class="offset-limitb" id="oLimitIDb">NA</div>
-       </div>
-       </div>
+      <div class="wrapper6a clearfix"><!--IS IS FOR G SET Threshold-->
+        <div class="set-threshold-limit" id="stLimitIDa">G Th:</div>
 
-       <div class="wrapper6a clearfix"><!--IS IS FOR G SET Threshold-->
-         <div class="set-threshold-limit" id="stLimitIDa">G Th:</div>
+        <div class="set-threshold-limit-input" id="stLimitInputID"><input type="text" id="tDataA" name="LastNameA" value="0.5"><br></div>
+      </div>
 
-         <div class="set-threshold-limit-input" id="stLimitInputID"><input type="text" id="tDataA" name="LastNameA" value="0.5"><br></div>
-       </div>
+      <div class="wrapper6b clearfix"><!--IS IS FOR A SET Threshold-->
+        <div class="set-threshold-limitB" id="stLimitIDb">A Th:</div>
 
-       <div class="wrapper6b clearfix"><!--IS IS FOR A SET Threshold-->
-         <div class="set-threshold-limitB" id="stLimitIDb">A Th:</div>
+        <div class="set-threshold-limit-inputB" id="stLimitInputID"><input type="text" id="tDataB" name="LastNameB" value="1000"><br></div>
+      </div>
 
-         <div class="set-threshold-limit-inputB" id="stLimitInputID"><input type="text" id="tDataB" name="LastNameB" value="1000"><br></div>
-       </div>
+      <div class="wrapper6c clearfix"><!--IS IS FOR BLE SET Threshold-->
+        <div class="set-threshold-limitC" id="stLimitIDc">BLE Th:</div>
 
-       <div class="wrapper6c clearfix"><!--IS IS FOR BLE SET Threshold-->
-         <div class="set-threshold-limitC" id="stLimitIDc">BLE Th:</div>
+        <div class="set-threshold-limit-inputC" id="stLimitInputID"><input type="text" id="tDataC" name="LastNameC" value="-89"><br></div>
+      </div>
 
-         <div class="set-threshold-limit-inputC" id="stLimitInputID"><input type="text" id="tDataC" name="LastNameC" value="-89"><br></div>
-       </div>
+      <!-- Table of records havinf various sessions and sensors-UUID's-->
+      <div class="wrapper8 clearfix">
+      <div id="POItablediv" class="innerTable">
+        <table id="POITable" border="1">
+          <tr>
+            <td>S.No.</td>
+            <td>UUID</td>
+            <td>Session Number</td>
+            <td>Enter Time</td>
+            <td>Exit Time</td>
+            <td>Session-AT</td>
+            <td>Session-IT</td>
+            <td>Total AT</td>
+            <td>Total In-Time</td>
 
-       <!-- Table of records havinf various sessions and sensors-UUID's-->
-       <div class="wrapper8 clearfix">
-       <div id="POItablediv" class="innerTable">
-         <table id="POITable" border="1">
-           <tr>
-             <td>S.No.</td>
-             <td>UUID</td>
-             <td>Session Number</td>
-             <td>Session-Work Time</td>
-             <td>Total Work Time</td>
-             <td>Entering Time</td>
-             <td>Exit Time</td>
-             <td>Total In-Time</td>
-           </tr>
-           <tr>
-             <td>1</td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
-             <td><input size=25 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td>Activity Start</td>
+            <td>Activity Stop</td>
+          </tr>
+          <tr>
+            <td>0</td>
+            <td><input size=10 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=19 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
 
-           </tr>
-         </table>
-       </div>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+            <td><input size=20 type="text" id="lngbox" readonly=true/ value="NIL"></td>
+          </tr>
+        </table>
+      </div>
 
-     </div>
-      	<script>
+    </div>
+  	<script>
 
      	MQTTconnect();
      	</script>
@@ -670,5 +851,5 @@ console.log('no data from sensor 2');
        <script src="finalGyroAccel.js"></script>
        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
         </body>
-     </html>
+   </html>
 

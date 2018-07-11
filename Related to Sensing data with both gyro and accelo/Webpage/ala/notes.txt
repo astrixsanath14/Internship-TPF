@@ -11,8 +11,60 @@ Index     Denotes                                           Initialised-With
 devicesHistory Details:
 Index     Denotes                                           Initialised-With
 0         Last Session Number                                1
-1         Last Work Duration                                -1
+1         All Work Duration                                 -1
 2         Total Work Time of Device                         -1
 3         INRANGE                                           -1
-4         Last Entry Time                                   -1
-5         Last Entry Time                                   -1
+4         Last Entry Time (Session)                         -1
+5         Last Exit Time (Session)                         -1
+
+6         Last ROW                                          -1 // reset
+7         Last Activity Start Time (Session)                -1 // reset
+8         Last Activity Stop Time (Session)                 -1 // reset
+
+TABLE
+//Updated first
+Index     Denotes                   Short-Form
+0         S.No.                     NA
+1         UUID                      UUID
+2         Session Number            SN
+3         Enter Time                ST
+
+//Updated Real Time
+4         Exit Time                 (ET)
+5         Session-AT - Active       (SWT)
+6         Session-IT - Idle         (SIT)
+7         Total AT - Active         (TWT)
+8         Total In-Time - InRange   (inrangeTime)
+
+9         Last Activity Start       (LSST)
+10        Last Activity Stop        (LSET)
+
+
+//function declarations
+function insRow(UUID,SN,SWT,SIT,TWT,ST,ET,inrangeTime)
+function crtRow(UUID,SN,ST)
+function rangeTimeExitTimeUpdt(ST,ET,inrangeTime,row)
+function updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row)
+function UpdateFinalRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row)
+
+
+//formulas
+SN = devicesHistory[UUID][0];
+ST = devicesHistory[UUID][4];
+
+devicesHistory[UUID][6] = crtRow(UUID,SN,ST);
+
+row = devicesHistory[UUID][6];
+
+ET = devicesHistory[UUID][5];
+SWT = timeTracker[UUID][0];
+inrangeTime = devicesHistory[UUID][4] - epochDate;
+SIT = inrangeTime - timeTracker[UUID][0];
+TWT = devicesHistory[UUID][2]+timeTracker[UUID][0];
+
+LSST = devicesHistory[UUID][7];
+LSST = devicesHistory[UUID][8];
+
+
+
+

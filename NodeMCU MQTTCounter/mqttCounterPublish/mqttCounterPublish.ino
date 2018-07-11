@@ -60,7 +60,7 @@ char* topic = "gadhala12345";
 char* server = "iot.eclipse.org";
 //char* server = "broker.mqtt-dashboard.com";
 int RSSI=10;
-int ID=2;
+int ID=1;
 
 
 void callback(char* topic, byte* payload, unsigned int length) {
@@ -86,10 +86,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
 //PubSubClient client(server, 8000 , callback, wifiClient);
 
 WiFiClient wifiClient;
+//wifiClient.setmode(
+//WiFiClient.setmode(WiFiClient.STATION);
 PubSubClient client(server, 1883 , callback, wifiClient);
 //client.setServer(server, 8000);
 //client.setCallback(callback);
-
 
 String macToStr(const uint8_t* mac)
 {
@@ -210,7 +211,7 @@ void setup() {
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-
+  //WiFi.setMode(WiFi.STATION);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
