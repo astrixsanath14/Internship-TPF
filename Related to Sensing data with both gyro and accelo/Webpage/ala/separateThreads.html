@@ -6,150 +6,9 @@
 	 </script>
    <script src="http://code.jquery.com/jquery-1.7.2.js"></script>
    <script type = "text/javascript" language = "javascript">
-   //var moment = require('moment');
 
    var deviceList = [];
    var timeDeviceList = [];
-   function toHumanDate(epochValue){
-     var date = new Date(epochValue);
-     console.log(date);
-     var s = String(date.getDate()) + "/" + String(date.getMonth() + 1) + "/" + String(date.getFullYear()) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
-     return s;
-   }
-
-   //appending of record as a whole after one session
-   function insRow(UUID,SN,SWT,SIT,TWT,ST,ET,inrangeTime) {
-     console.log('inserted in to a table 1');
-     var x = document.getElementById('POITable');
-     var new_row = x.rows[1].cloneNode(true);
-     var len = x.rows.length;
-     new_row.cells[0].innerHTML = len;
-
-     new_row.cells[1].innerHTML = UUID;
-     new_row.cells[2].innerHTML = SN;
-
-     new_row.cells[3].innerHTML = toHumanDate(ST*1000);
-     new_row.cells[4].innerHTML = toHumanDate(ET*1000);
-
-     new_row.cells[5].innerHTML = SWT;
-     //console.log(SIT);
-     new_row.cells[6].innerHTML = SIT;
-     new_row.cells[7].innerHTML = TWT;
-     new_row.cells[8].innerHTML = inrangeTime;
-     x.appendChild(new_row);
-     return ;
-   }
-
-   //creating a new record
-   function crtRow(UUID,SN,ST) {
-     console.log('inserted in to a table 2');
-     var x = document.getElementById('POITable');
-     var new_row = x.rows[1].cloneNode(true);
-     //console.log(new_row);
-     var len = x.rows.length;
-
-     new_row.cells[0].innerHTML = len-1;
-     /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-     inp1.id += len;
-     inp1.value = '';
-     var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-     inp2.id += len;
-     inp2.value = '';*/
-     new_row.cells[1].innerHTML = UUID;
-     new_row.cells[2].innerHTML = SN;
-
-     new_row.cells[3].innerHTML = toHumanDate(ST*1000);
-     new_row.cells[4].innerHTML = " - ";
-
-     new_row.cells[5].innerHTML = " - ";
-     new_row.cells[6].innerHTML = " - ";
-     new_row.cells[7].innerHTML = " - ";
-     //new_row.cells[5].innerHTML = ST;
-     //new_row.cells[6].innerHTML = ET;
-     new_row.cells[8].innerHTML = " - ";
-     new_row.cells[9].innerHTML = " - ";
-     new_row.cells[10].innerHTML = " - ";
-     x.appendChild(new_row);
-     return len;
-   }
-
-   function rangeTimeExitTimeUpdt(ST,ET,inrangeTime,row){
-     console.log('inserted in to a table 3');
-     var x = document.getElementById('POITable');
-     var new_row = x.rows[row];
-     //new_row.cells[6].innerHTML = SIT;
-     new_row.cells[8].innerHTML = inrangeTime;
-     //x.appendChild(new_row);
-     return;
-   }
-   //updating the reocrd of everytime
-   function updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row){
-     console.log('inserted in to a table 4');
-     //console.log(row);
-     var x = document.getElementById('POITable');
-     var new_row = x.rows[row];
-     /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-     inp1.id += len;
-     inp1.value = '';
-     var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-     inp2.id += len;
-     inp2.value = '';*/
-     //console.log(new_row);
-
-     new_row.cells[5].innerHTML = SWT;
-     new_row.cells[6].innerHTML = SIT;
-     new_row.cells[7].innerHTML = TWT;
-     new_row.cells[8].innerHTML = inrangeTime;
-     //console.log('LSST '+LSST);
-     if(LSST==-1){
-       new_row.cells[9].innerHTML = " - ";
-     }
-     else{
-     new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
-     }
-     if(LSET==-1){
-       new_row.cells[10].innerHTML = " - ";
-     }
-     else{
-     new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
-     }
-     //x.appendChild(new_row);
-     return;
-   }
-
-   //final upfation of record
-   function UpdateFinalRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row) {
-     console.log('inserted in to a table 5');
-     var x = document.getElementById('POITable');
-     var new_row = x.rows[row];
-     //var len = x.rows.length;
-     //new_row.cells[0].innerHTML = len;
-     //new_row.cells[1].innerHTML = UUID;
-     //new_row.cells[2].innerHTML = SN;
-
-     //new_row.cells[3].innerHTML = toHumanDate(ST*1000);
-     new_row.cells[4].innerHTML = toHumanDate(ET*1000);
-
-     new_row.cells[5].innerHTML = SWT;
-     new_row.cells[6].innerHTML = SIT;
-     new_row.cells[7].innerHTML = TWT;
-     new_row.cells[8].innerHTML = inrangeTime;
-     if(LSST==-1){
-       new_row.cells[9].innerHTML = " - ";
-     }
-     else{
-     new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
-     }
-     if(LSET==-1){
-       new_row.cells[10].innerHTML = " - ";
-     }
-     else{
-     new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
-     }
-     //x.appendChild(new_row);
-     return ;
-   }
-
    //var thresholdLimit = parseFloat(prompt('Enter a threshold value : '));
 
    //var threshoLimit = prompt('Enter a threshold value : ');
@@ -183,7 +42,7 @@
 
    var topics = "outsinhala12345";
    var topicFlag=-1;
-   var mqtt,mqtt1;
+   var mqtt,mqtt1,mqtt2;
    var connected_flag=0;
    var reconnectTimeout = 2000;
    var host="iot.eclipse.org";
@@ -213,7 +72,199 @@
 		//var host="broker.hivemq.com";
 		//var port=8000;
 
-    //sensor 1 code of onConnect
+    var sqlStringMessage = "";
+    function toHumanDate(epochValue){
+      var date = new Date(epochValue);
+      console.log(date);
+      var s = String(date.getDate()) + "/" + String(date.getMonth() + 1) + "/" + String(date.getFullYear()) + " " + String(date.getHours()) + ":" + String(date.getMinutes()) + ":" + String(date.getSeconds());
+      return s;
+    }
+
+    //appending of record as a whole after one session
+    function insRow(UUID,SN,SWT,SIT,TWT,ST,ET,inrangeTime) {
+      console.log('inserted in to a table 1');
+      var x = document.getElementById('POITable');
+      var new_row = x.rows[1].cloneNode(true);
+      var len = x.rows.length;
+      new_row.cells[0].innerHTML = len;
+
+      new_row.cells[1].innerHTML = UUID;
+      new_row.cells[2].innerHTML = SN;
+
+      new_row.cells[3].innerHTML = toHumanDate(ST*1000);
+      new_row.cells[4].innerHTML = toHumanDate(ET*1000);
+
+      new_row.cells[5].innerHTML = SWT;
+      //console.log(SIT);
+      new_row.cells[6].innerHTML = SIT;
+      new_row.cells[7].innerHTML = TWT;
+      new_row.cells[8].innerHTML = inrangeTime;
+      x.appendChild(new_row);
+      return ;
+    }
+
+    //creating a new record
+    function crtRow(UUID,SN,ST) {
+      console.log('inserted in to a table 2');
+      var x = document.getElementById('POITable');
+      var new_row = x.rows[1].cloneNode(true);
+      //console.log(new_row);
+      var len = x.rows.length;
+
+      new_row.cells[0].innerHTML = len-1;
+      /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+      inp1.id += len;
+      inp1.value = '';
+      var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+      inp2.id += len;
+      inp2.value = '';*/
+      new_row.cells[1].innerHTML = UUID;
+      new_row.cells[2].innerHTML = SN;
+
+      new_row.cells[3].innerHTML = toHumanDate(ST*1000);
+      new_row.cells[4].innerHTML = " - ";
+
+      new_row.cells[5].innerHTML = " - ";
+      new_row.cells[6].innerHTML = " - ";
+      new_row.cells[7].innerHTML = " - ";
+      //new_row.cells[5].innerHTML = ST;
+      //new_row.cells[6].innerHTML = ET;
+      new_row.cells[8].innerHTML = " - ";
+      new_row.cells[9].innerHTML = " - ";
+      new_row.cells[10].innerHTML = " - ";
+      x.appendChild(new_row);
+      return len;
+    }
+
+    function rangeTimeExitTimeUpdt(ST,ET,inrangeTime,row){
+      console.log('inserted in to a table 3');
+      var x = document.getElementById('POITable');
+      var new_row = x.rows[row];
+      //new_row.cells[6].innerHTML = SIT;
+      new_row.cells[8].innerHTML = inrangeTime;
+      //x.appendChild(new_row);
+      return;
+    }
+    //updating the reocrd of everytime
+    function updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row){
+      console.log('inserted in to a table 4');
+      //console.log(row);
+      var x = document.getElementById('POITable');
+      var new_row = x.rows[row];
+      /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+      inp1.id += len;
+      inp1.value = '';
+      var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+      inp2.id += len;
+      inp2.value = '';*/
+      //console.log(new_row);
+
+      new_row.cells[5].innerHTML = SWT;
+      new_row.cells[6].innerHTML = SIT;
+      new_row.cells[7].innerHTML = TWT;
+      new_row.cells[8].innerHTML = inrangeTime;
+      //console.log('LSST '+LSST);
+      if(LSST==-1){
+        new_row.cells[9].innerHTML = " - ";
+      }
+      else{
+      new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+      }
+      if(LSET==-1){
+        new_row.cells[10].innerHTML = " - ";
+      }
+      else{
+      new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
+      }
+      //x.appendChild(new_row);
+      return;
+    }
+
+    //final upfation of record
+    function UpdateFinalRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row) {
+      console.log('inserted in to a table 5');
+      var x = document.getElementById('POITable');
+      var new_row = x.rows[row];
+      //var len = x.rows.length;
+      //new_row.cells[0].innerHTML = len;
+      //new_row.cells[1].innerHTML = UUID;
+      //new_row.cells[2].innerHTML = SN;
+
+      //new_row.cells[3].innerHTML = toHumanDate(ST*1000);
+      new_row.cells[4].innerHTML = toHumanDate(ET*1000);
+
+      new_row.cells[5].innerHTML = SWT;
+      new_row.cells[6].innerHTML = SIT;
+      new_row.cells[7].innerHTML = TWT;
+      new_row.cells[8].innerHTML = inrangeTime;
+      if(LSST==-1){
+        new_row.cells[9].innerHTML = " - ";
+      }
+      else{
+      new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+      }
+      if(LSET==-1){
+        new_row.cells[10].innerHTML = " - ";
+      }
+      else{
+      new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
+      }
+      //x.appendChild(new_row);
+     sqlStringMessage = String(new_row.cells[0].innerHTML) + "#" + String(new_row.cells[1].innerHTML) + "#" + String(new_row.cells[2].innerHTML) + "#" + String(new_row.cells[3].innerHTML) + "#" + String(new_row.cells[4].innerHTML) + "#" + String(new_row.cells[5].innerHTML)+ "#" + String(new_row.cells[6].innerHTML)+ "#" + String(new_row.cells[7].innerHTML)+ "#" + String(new_row.cells[8].innerHTML)+ "#" + String(new_row.cells[9].innerHTML)+ "#" + String(new_row.cells[10].innerHTML);
+
+     //
+      //MQTTconnect();
+      message = new Paho.MQTT.Message(sqlStringMessage);
+      message.destinationName = "instaiscool12345";
+      mqtt.send(message);
+
+     //
+    }
+
+    function onConnect() {
+    // Once a connection has been made, make a subscription and send a message.
+
+    console.log("Connected to SQL DATABASE TOPIC");
+    //mqtt.subscribe("sensor1");
+    //message = new Paho.MQTT.Message(sqlStringMessage);
+    //message.destinationName = "instaiscool12345";
+    //mqtt.send(message);
+    }
+    		function onFailure(message) {
+    			console.log("Connection Attempt to Host "+host+"Failed");
+    			setTimeout(MQTTconnect, reconnectTimeout);
+            }
+    		function onMessageArrived(msg){
+    			var out_msg="Message received "+msg.payloadString+"<br>";
+    			//out_msg=out_msg+"Message received Topic "+msg.destinationName;
+    			console.log(out_msg);
+    		    }
+
+    	 	/*function onConnect() {
+    	  // Once a connection has been made, make a subscription and send a message.
+
+    		console.log("Connected to SQL DATABASE TOPIC");
+    		//mqtt.subscribe("sensor1");
+    		message = new Paho.MQTT.Message("Hello World");
+    		message.destinationName = "instaiscool12345";
+    		mqtt.send(message);
+      }*/
+         	  function MQTTconnect() {
+         		console.log("connecting to "+ host +" "+ port);
+         		mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId0");
+         		//document.write("connecting to "+ host);
+         		var options = {
+         			timeout: 3,
+         			onSuccess: onConnect,
+         			onFailure: onFailure
+            };
+         		//mqtt.onMessageArrived = onMessageArrived
+         		mqtt.connect(options); //connect
+            //mqtt.connect();
+            return ;
+         		}
+
+
 	 	function onConnect1() {
   	  // Once a connection has been made, make a subscription and send a message.
   		console.log("Connected to sensor 1");
@@ -640,7 +691,42 @@ console.log('no data from sensor 2');
       function onConnected2(recon,url){
       console.log(" in onConnected " +reconn);
       }
+/*
+//sqlite start
+      function onFailure(message) {
+  			console.log("Connection Attempt to Host "+host+"Failed 0");
+  			setTimeout(MQTTconnect, reconnectTimeout);
+          }
 
+  	 	/*function onConnect() {
+  	  // Once a connection has been made, make a subscription and send a message.
+  		console.log("Connected to SQL DATABASE TOPIC");
+  		//mqtt.subscribe("sensor1");
+  		message = new Paho.MQTT.Message("Hello World");
+  		message.destinationName = "instaiscool12345";
+  		mqtt.send(message);
+    }
+  	  function MQTTconnect() {
+  		console.log("connecting to iot.eclipse.org 1883 0");
+
+      mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId2")
+
+
+  		//document.write("connecting to "+ host);
+  		var options = {
+  			timeout: 3,
+  			onSuccess: onConnect,
+  			onFailure: onFailure
+      };
+  		//mqtt.onMessageArrived = onMessageArrived
+  		mqtt.connect(options); //connect
+      //mqtt.connect();
+      return false;
+  		}
+
+      //sqlite end
+
+      */
 	  function MQTTconnect1() {
 		console.log("connecting to "+ host +" "+ port);
 
@@ -861,6 +947,7 @@ console.log('no data from sensor 2');
 
      	MQTTconnect1();
      	MQTTconnect2();
+      MQTTconnect();
      	</script>
 
        <script src="finalGyroAccel.js"></script>

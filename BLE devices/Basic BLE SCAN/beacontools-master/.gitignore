@@ -1,0 +1,17 @@
+# general things to ignore
+build/
+dist/
+*.egg-info/
+*.egg
+*.py[cod]
+__pycache__/
+*.so
+*~
+.DS_Store
+venv/
+venv27/
+
+# due to using tox and pytest
+.coverage
+.tox
+.cache
