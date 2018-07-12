@@ -45,7 +45,7 @@
      console.log('inserted in to a table 2');
      var x = document.getElementById('POITable');
      var new_row = x.rows[1].cloneNode(true);
-     console.log(new_row);
+     //console.log(new_row);
      var len = x.rows.length;
 
      new_row.cells[0].innerHTML = len-1;
@@ -95,16 +95,24 @@
      inp2.id += len;
      inp2.value = '';*/
      //console.log(new_row);
-     new_row.cells[4].innerHTML = toHumanDate(ET*1000);
 
      new_row.cells[5].innerHTML = SWT;
-     console.log(SIT);
      new_row.cells[6].innerHTML = SIT;
      new_row.cells[7].innerHTML = TWT;
      new_row.cells[8].innerHTML = inrangeTime;
-
+     //console.log('LSST '+LSST);
+     if(LSST==-1){
+       new_row.cells[9].innerHTML = " - ";
+     }
+     else{
      new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+     }
+     if(LSET==-1){
+       new_row.cells[10].innerHTML = " - ";
+     }
+     else{
      new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
+     }
      //x.appendChild(new_row);
      return;
    }
@@ -116,12 +124,6 @@
      var new_row = x.rows[row];
      //var len = x.rows.length;
      //new_row.cells[0].innerHTML = len;
-     /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
-     inp1.id += len;
-     inp1.value = '';
-     var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
-     inp2.id += len;
-     inp2.value = '';*/
      //new_row.cells[1].innerHTML = UUID;
      //new_row.cells[2].innerHTML = SN;
 
@@ -132,9 +134,18 @@
      new_row.cells[6].innerHTML = SIT;
      new_row.cells[7].innerHTML = TWT;
      new_row.cells[8].innerHTML = inrangeTime;
-
+     if(LSST==-1){
+       new_row.cells[9].innerHTML = " - ";
+     }
+     else{
      new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+     }
+     if(LSET==-1){
+       new_row.cells[10].innerHTML = " - ";
+     }
+     else{
      new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
+     }
      //x.appendChild(new_row);
      return ;
    }
@@ -372,7 +383,7 @@
                                     LSET = devicesHistory[UUID][8];
                                     row = devicesHistory[UUID][6];
 
-                                    console.log("HEREEEEEEEEEE 0 "+SIT);
+                                    //console.log("HEREEEEEEEEEE 0 "+SIT);
                                     updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                                   }
                                   else{
@@ -391,14 +402,14 @@
                                     //hereupdtRow(SWT,SIT,TWT,inrangeTime,devicesHistory[UUID][6]);
                                     var activityTime = timeTracker[UUID][3]-timeTracker[UUID][2];
                                     SWT = timeTracker[UUID][0]+ activityTime;
-                                    inrangeTime = devicesHistory[UUID][5]-[UUID][4];
+                                    inrangeTime = devicesHistory[UUID][5]-devicesHistory[UUID][4];
                                     SIT = inrangeTime - timeTracker[UUID][0];
                                     TWT = devicesHistory[UUID][2]+timeTracker[UUID][0];
                                     ET = devicesHistory[UUID][5];
                                     LSST = devicesHistory[UUID][7];
                                     LSET = devicesHistory[UUID][8];
                                     row = devicesHistory[UUID][6];
-                                    console.log("HEREEEEEEEEEE 1 "+SIT);
+                                    //console.log("HEREEEEEEEEEE 1 "+SIT);
                                     updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                                   }
                             }
@@ -423,9 +434,9 @@
                                 //hereupdtRow(SWT,SIT,TWT,inrangeTime,devicesHistory[UUID][6]);
                                 timeTracker[UUID][2] = timeTracker[UUID][3] = -1;
                                 devicesHistory[UUID][7] = devicesHistory[UUID][8] = -1;
-                                console.log('total time : '+timeTracker[UUID][0]);
+                                //console.log('total time : '+timeTracker[UUID][0]);
 
-                                console.log("HEREEEEEEEEEE 2 "+SIT);
+                                //console.log("HEREEEEEEEEEE 2 "+SIT);
                                 updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                             }
                             console.log(timeTracker[UUID]);
@@ -541,7 +552,6 @@ mqtt2.onMessageArrived = function(message){
             var ET = devicesHistory[UUID][5];
             var inrangeTime = ET - ST;
             var row = devicesHistory[UUID][6];
-            console.log(devicesHistory[UUID][6]);
             rangeTimeExitTimeUpdt(ST,ET,inrangeTime,row);
           }
           else if(devicesHistory[UUID][3]!=0){
@@ -560,7 +570,7 @@ mqtt2.onMessageArrived = function(message){
             devicesHistory[UUID][3]=0;
             devicesHistory[UUID][5] = epochDate;
 
-            console.log('UUID: '+UUID+' SESSION: '+devicesHistory[UUID][0]+' Total Work Time = '+devicesHistory[UUID][2]);
+            console.log('SESSION Details : "UUID: '+UUID+' SESSION: '+devicesHistory[UUID][0]+' Total Work Time = '+devicesHistory[UUID][2]);
             SWT = timeTracker[UUID][0];
             var SN = devicesHistory[UUID][0];
             var TWT = devicesHistory[UUID][2];
@@ -602,13 +612,13 @@ console.log('no data from sensor 2');
       //document.getElementById("status").innerHTML = "Connection Lost";
       //document.getElementById("status_messages").innerHTML ="Connection Lost";
       connected_flag=0;
-      MQTTconnect(); //connect
+      MQTTconnect1(); //connect
       }
       function onFailure1(message) {
         console.log("Failed 1");
         console.log(message.errorMessage);
         //document.getElementById("status_messages").innerHTML = "Connection Failed- Retrying";
-        setTimeout(MQTTconnect, reconnectTimeout);
+        setTimeout(MQTTconnect1, reconnectTimeout);
       }
       function onConnected1(recon,url){
       console.log(" in onConnected " +reconn);
@@ -619,24 +629,23 @@ console.log('no data from sensor 2');
       //document.getElementById("status").innerHTML = "Connection Lost";
       //document.getElementById("status_messages").innerHTML ="Connection Lost";
       connected_flag=0;
-      MQTTconnect(); //connect
+      MQTTconnect2(); //connect
       }
       function onFailure2(message) {
         console.log("Failed 2");
         console.log(message.errorMessage);
         //document.getElementById("status_messages").innerHTML = "Connection Failed- Retrying";
-        setTimeout(MQTTconnect, reconnectTimeout);
+        setTimeout(MQTTconnect2, reconnectTimeout);
       }
       function onConnected2(recon,url){
       console.log(" in onConnected " +reconn);
       }
 
-	  function MQTTconnect() {
+	  function MQTTconnect1() {
 		console.log("connecting to "+ host +" "+ port);
 
 
     mqtt1 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId1");//mpu6050sensor
-    mqtt2 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId2");//ble
 
     //mqtt = new Paho.MQTT.Client("iot.eclipse.org", Number(1883),  "myClientId" + new Date().getTime());
     /*mqttConnectOptions = new MqttConnectOptions();
@@ -650,28 +659,33 @@ console.log('no data from sensor 2');
       onFailure: onFailure1
 		};
 
-    var options2 = {
-			timeout: 20,
-			onSuccess: onConnect2,
-      onFailure: onFailure2
-		};
 
 
     mqtt1.onConnectionLost = onConnectionLost1;
     //mqtt.onMessageArrived = onMessageArrived;
     mqtt1.onConnected = onConnected1;
 		mqtt1.connect(options1); //connect
+    return false;
+		}
+
+    function MQTTconnect2() {
+    console.log("connecting to "+ host +" "+ port);
+
+
+    mqtt2 = new Paho.MQTT.Client("iot.eclipse.org", Number(80), "/ws", "clientId2");//ble
+
+    var options2 = {
+      timeout: 20,
+      onSuccess: onConnect2,
+      onFailure: onFailure2
+    };
 
     mqtt2.onConnectionLost = onConnectionLost2;
     //mqtt.onMessageArrived = onMessageArrived;
     mqtt2.onConnected = onConnected2;
-		mqtt2.connect(options2);
-    /*mqtt1.onConnectionLost = onConnectionLost;
-    //mqtt.onMessageArrived = onMessageArrived;
-    mqtt1.onConnected = onConnected;
-		mqtt1.connect(options); //connect*/
+    mqtt2.connect(options2);
     return false;
-		}
+    }
 
 	  </script>
      </head>
@@ -845,7 +859,8 @@ console.log('no data from sensor 2');
     </div>
   	<script>
 
-     	MQTTconnect();
+     	MQTTconnect1();
+     	MQTTconnect2();
      	</script>
 
        <script src="finalGyroAccel.js"></script>
