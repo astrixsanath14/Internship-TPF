@@ -146,7 +146,38 @@
       return;
     }
     //updating the reocrd of everytime
-    function updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row){
+    function updtRowBefore(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row){
+      console.log('inserted in to a table 4');
+      //console.log(row);
+      var x = document.getElementById('POITable');
+      var new_row = x.rows[row];
+      /*var inp1 = new_row.cells[1].getElementsByTagName('input')[0];
+      inp1.id += len;
+      inp1.value = '';
+      var inp2 = new_row.cells[2].getElementsByTagName('input')[0];
+      inp2.id += len;
+      inp2.value = '';*/
+      //console.log(new_row);
+
+      new_row.cells[5].innerHTML = SWT;
+      new_row.cells[6].innerHTML = SIT;
+      new_row.cells[7].innerHTML = TWT;
+      new_row.cells[8].innerHTML = inrangeTime;
+      //console.log('LSST '+LSST);
+      if(LSST==-1){
+        new_row.cells[9].innerHTML = " - ";
+      }
+      else{
+      new_row.cells[9].innerHTML = toHumanDate(LSST*1000);
+      }
+      if(new_row.cells[10].innerHTML != " - "){
+        new_row.cells[10].innerHTML = " - ";
+      }
+      //x.appendChild(new_row);
+      return;
+    }
+    //updating the reocrd of everytime
+    function updtRowAfter(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row){
       console.log('inserted in to a table 4');
       //console.log(row);
       var x = document.getElementById('POITable');
@@ -175,11 +206,10 @@
       }
       else{
       new_row.cells[10].innerHTML = toHumanDate(LSET*1000);
-      }
+    }
       //x.appendChild(new_row);
       return;
     }
-
     //final upfation of record
     function UpdateFinalRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row) {
       console.log('inserted in to a table 5');
@@ -435,7 +465,7 @@
                                     row = devicesHistory[UUID][6];
 
                                     //console.log("HEREEEEEEEEEE 0 "+SIT);
-                                    updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
+                                    updtRowBefore(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                                   }
                                   else{
                                     //already started - activity
@@ -461,7 +491,7 @@
                                     LSET = devicesHistory[UUID][8];
                                     row = devicesHistory[UUID][6];
                                     //console.log("HEREEEEEEEEEE 1 "+SIT);
-                                    updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
+                                    updtRowBefore(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                                   }
                             }
                             else{ // now stopped
@@ -484,11 +514,11 @@
 
                                 //hereupdtRow(SWT,SIT,TWT,inrangeTime,devicesHistory[UUID][6]);
                                 timeTracker[UUID][2] = timeTracker[UUID][3] = -1;
-                                devicesHistory[UUID][7] = devicesHistory[UUID][8] = -1;
+                                //devicesHistory[UUID][7] = devicesHistory[UUID][8] = -1;
                                 //console.log('total time : '+timeTracker[UUID][0]);
 
                                 //console.log("HEREEEEEEEEEE 2 "+SIT);
-                                updtRow(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
+                                updtRowAfter(SWT,SIT,TWT,ET,inrangeTime,LSST,LSET,row);
                             }
                             console.log(timeTracker[UUID]);
                       }
@@ -949,9 +979,8 @@ console.log('no data from sensor 2');
      	MQTTconnect2();
       MQTTconnect();
      	</script>
-
-       <script src="finalGyroAccel.js"></script>
-       <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-        </body>
-   </html>
+      <script src="finalGyroAccel.js"></script>
+      <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+      </body>
+</html>
 

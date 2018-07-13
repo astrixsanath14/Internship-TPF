@@ -13,7 +13,7 @@ DB_Name =  "blehis.db"
 
 #DB_Name =  "gyroValues.db"
 # SQLite DB Table Schema
-#drop table if exists gyro ;
+drop table if exists gyro ;
 TableSchema="""
 create table gyro(
   ID integer primary key autoincrement,

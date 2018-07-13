@@ -154,12 +154,12 @@
 }
 
 .wrapper8 {
-    width: 1353px;
+    width: 13`5px;
     height: 130px;
     position: absolute;
 
     top: 110.5%;
-    left: 49%;
+    left: 49.5%;
     transform: translate(-50%, -50%);
     box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.3);
     overflow: scroll;;
