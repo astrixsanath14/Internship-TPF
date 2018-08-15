@@ -155,7 +155,8 @@ int WiFiUDP::peek()
 
 void WiFiUDP::flush()
 {
-  // TODO: a real check to ensure transmission has been completed
+  while (available())
+    read();
 }
 
 IPAddress  WiFiUDP::remoteIP()
