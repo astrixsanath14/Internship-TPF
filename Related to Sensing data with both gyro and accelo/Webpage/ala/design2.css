@@ -167,7 +167,7 @@
 
 
 body {
-    background-image: linear-gradient(rgba(62, 20, 20, 0.4), rgba(62, 20, 20, 0.4)), url(back.jpg);
+    background-color: rgba(0, 0, 0, 1);/*linear-gradient(, rgba(0, 0, 0, 1)), url(back.jpg);*/
     background-size: cover;
     background-position: center;
     font-family: Lato;
@@ -210,7 +210,7 @@ body {
 }
 
 .title {
-  background-color: #EB4D4D;
+  background-color: #1c7a96;
   color: #fff;
   width: 35%;
   margin: 0 auto;
@@ -222,7 +222,7 @@ body {
 
 .vib-box {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 55%;
     margin: 0 auto;
@@ -259,7 +259,7 @@ body {
 
 .vib-boxB {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 55%;
     margin: 0 auto;
@@ -269,7 +269,7 @@ body {
 
 .vib-boxC {
     text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 55%;
     margin: 0 auto;
@@ -279,7 +279,7 @@ body {
 
 .threshold-limit-main {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 40%;
     margin: 0 auto;
@@ -298,7 +298,7 @@ body {
 
 .offset-limit-main {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 60%;
     margin: 0 auto;
@@ -308,7 +308,7 @@ body {
 
 .offset-limit-maina {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 60%;
     margin: 0 auto;
@@ -318,7 +318,7 @@ body {
 
 .offset-limit-mainb {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 60%;
     margin: 0 auto;
@@ -355,7 +355,7 @@ body {
 
 .set-threshold-limit {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 60%;
     margin: 0 auto;
@@ -365,7 +365,7 @@ body {
 
 .set-threshold-limitB {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 60%;
     margin: 0 auto;
@@ -375,7 +375,7 @@ body {
 
 .set-threshold-limitC {
   text-align: center;
-    background-color: #EB4D4D;
+    background-color: #1c7a96;
     color: #fff;
     width: 60%;
     margin: 0 auto;

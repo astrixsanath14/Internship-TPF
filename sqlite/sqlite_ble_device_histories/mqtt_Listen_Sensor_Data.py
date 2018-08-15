@@ -14,18 +14,20 @@ MQTT_Broker = "iot.eclipse.org"
 MQTT_Port = 1883
 Keep_Alive_Interval = 45
 MQTT_Topic = "instaiscool12345"
-
+print(MQTT_Topic)
 #Subscribe to all Sensors at Base Topic
 def on_connect(self, mosq, obj, rc):
 	mqttc.subscribe(MQTT_Topic, 0)
+	print("Connected")
 
 #Save Data into DB Table
 def on_message(mosq, obj, msg):
+	print("here")
 	# This is the Master Call for saving MQTT Data into DB
 	# For details of "sensor_Data_Handler" function please refer "sensor_data_to_db.py"
-	print "MQTT Data Received..."
-	print "MQTT Topic: " + msg.topic
-	print "Data: " + msg.payload
+	print ("MQTT Data Received...")
+	print ("MQTT Topic: " + str(msg.topic))
+	print ("Data: " + str(msg.payload))
 	sensor_Data_Handler(msg.topic, msg.payload)
 
 def on_subscribe(mosq, obj, mid, granted_qos):

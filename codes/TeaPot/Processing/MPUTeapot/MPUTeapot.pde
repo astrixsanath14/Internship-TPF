@@ -69,7 +69,7 @@ void setup() {
 
     // get the first available port (use EITHER this OR the specific port code below)
     //String portName = Serial.list()[0];
-    String portName = "/dev/cu.wchusbserial1410" ;
+    String portName = "/dev/cu.wchusbserial1420" ;
     
     // get a specific serial port (use EITHER this OR the first-available code above)
     //String portName = "COM4";
